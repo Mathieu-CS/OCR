@@ -7,12 +7,28 @@
 /* A utility function to print grid */
 void print(int arr[N][N])
 {
-     for (int i = 0; i < N; i++)
-      {
-         for (int j = 0; j < N; j++)
+    printf("---------------------\n");
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
             printf("%d ",arr[i][j]);
-         printf("\n");
-       }
+
+            if (j == 2 || j == 5)
+            {
+                printf("| ");
+            }
+        }
+
+        printf("\n");
+        
+        if (i == 2 || i == 5)
+        {
+            printf("---------------------\n");
+        }
+        
+    }
+    printf("---------------------\n");
 }
  
 // Checks whether it will be legal 
@@ -130,5 +146,4 @@ int main()
         printf("No solution exists");
  
     return 0;
-    // This is code is contributed by Pradeep Mondal P
 }
