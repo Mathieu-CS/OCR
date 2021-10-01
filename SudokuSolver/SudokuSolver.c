@@ -126,9 +126,25 @@ int solveSuduko(int grid[N][N], int row, int col)
     }
     return 0;
 }
- 
+
+int gridInit(FILE file)
+{
+	char line[81];
+	fgets(line, 81, stdin);
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			//TODO
+		}
+	}
+}
+
+
 int main()
 {
+	FILE *in_file = fopen("./SudokuGrid", "r");
+	int grid[N][N] = gridInit(*in_file);
     // 0 means unassigned cells
     int grid[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 },
                        { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
