@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
  
 // N is the size of the 2D matrix   N*N
 #define N 9
- 
+
+char sudoku[81];
+
 /* A utility function to print grid */
 void print(int arr[N][N])
 {
@@ -127,24 +130,22 @@ int solveSuduko(int grid[N][N], int row, int col)
     return 0;
 }
 
-int gridInit(FILE file)
+char *sudokuStr[](int grid[N][N])
 {
-	char line[81];
-	fgets(line, 81, stdin);
-	for (int i = 0; i < 9; i++)
+	int count = 0;
+	char sudoku[81];
+	for (int i = 0; i < N; i++)
 	{
-		for (int j = 0; j < 9; j++)
+		for (int j = 0; j < N; j++, count++)
 		{
-			//TODO
+			sudoku[count] = (char) grid[i][j];
 		}
 	}
+	return *sudoku;
 }
-
 
 int main()
 {
-	FILE *in_file = fopen("./SudokuGrid", "r");
-	int grid[N][N] = gridInit(*in_file);
     // 0 means unassigned cells
     int grid[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 },
                        { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
@@ -161,5 +162,7 @@ int main()
     else
         printf("No solution exists");
  
+    char *solvedSudoku[81] = sudokuStr(grid);
+    printf("this : %s\n", solvedSudoku);
     return 0;
 }
