@@ -1,180 +1,219 @@
-// This file holds the functions that will be used in split.c
-
-// includes for SDL
-
+#include <err.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
+#include <stdio.h>
+#include "detect_rect.h"
 
-// mandatory function to use SDL
 
-void init_sdl()
+// Init the SDL
+int Init_SDL()
 {
-    // Init only the video part.
-    // If it fails, die with an error message.
-    if(SDL_Init(SDL_INIT_VIDEO) == -1)
-    errx(1,"Could not initialize SDL: %s.\n", SDL_GetError());
-}
-
-// Loads an image in the SDL_Surface format.
-
-SDL_Surface* load_image(char *path)
-{
-    SDL_Surface *img;
-
-    // Load an image using SDL_image with format detection.
-    // If it fails, die with an error message.
-    img = IMG_Load(path);
-    if (!img)
-        errx(3, "can't load %s: %s", path, IMG_GetError());
-
-    return img;
-}
-
-// Returns the pixel at coordinates (x,y)
-
-Uint32 get_pixel(SDL_Surface *surface, unsigned x, unsigned y)
-{
-    Uint8 *p = pixel_ref(surface, x, y);
-
-    switch (surface->format->BytesPerPixel)
-    {
-        case 1:
-            return *p;
-
-        case 2:
-            return *(Uint16 *)p;
-
-        case 3:
-            if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-                return p[0] << 16 | p[1] << 8 | p[2];
-            else
-                return p[0] | p[1] << 8 | p[2] << 16;
-
-        case 4:
-            return *(Uint32 *)p;
+    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
+        printf("Unable to initialize SDL: %s\n", SDL_GetError());
+        return 1;
     }
-
     return 0;
 }
 
-// returns an array with [x, y] being the coordinates of the bottom right pixel of the rect
-
-char *GetLastPixelCoor(SDL_surface *img, width, height, i, j)
+SDL_Surface* display_bmp(char *file_name)
 {
-    int x = i;
-    int y = j;
+    SDL_Surface *image;
 
-    char *ret = malloc(w);
-    
-    if(!ret)
-    {
+    /* Load the BMP file into a surface */
+    image = SDL_LoadBMP(file_name);
+    if (image == NULL) {
+        fprintf(stderr, "Couldn't load %s: %s\n", file_name, SDL_GetError());
         return NULL;
     }
 
-    Uint32 pixel = get_pixel(img, x, y);
-
-    Uint8 r, g, b;
-    SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-
-    while(r == 0 && g == 0 && b == 0) // détection du côté haut
-    {
-        ret[0] = x;
-        x++;
-
-        if(x < width) // safe check
-        {
-            Uint32 pixel = get_pixel(img, x, y);
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    x = ret[0];
-
-    while(r == 0 && g == 0 && b == 0) // détection du côté droit
-    {
-        ret[1] = y;
-        y++;
-
-        if(y < height) // safe check
-        {
-            Uint32 pixel = get_pixel(img, x, y);
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    ret[0] = ret[0] - i;
-    ret[1] = ret[1] - j;
-
-    return ret;
+    return image;
 }
 
-// Returns the Rect corresponding to the sudoku grid in the surface *img;
+/*
+ * Return the pixel value at (x, y)
+ * NOTE: The surface must be locked before calling this!
+ */
 
-SDL_Rect get_grid(SDL_surface *img)
+Uint32 get_pixel(SDL_Surface *surface, int x, int y)
 {
-    long width = img->w;
-    long height = img->h;
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to retrieve */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
-    SDL_Rect myrect; // the final rect we will return
+    switch(bpp) {
+    case 1:
+        return *p;
 
-    myrect.h = 0;   // initialize the values of myrect
-    myrect.w = 0;
-    myrect.x = 0;
-    myrect.y = 0;
+    case 2:
+        return *(Uint16 *)p;
 
-    for(long i = 0; i < width; i++)
+    case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
+        else
+            return p[0] | p[1] << 8 | p[2] << 16;
+
+    case 4:
+        return *(Uint32 *)p;
+
+    default:
+        return 0;       /* shouldn't happen, but avoids warnings */
+    }
+}
+
+/// Get the coordinates of the first pixel of the rect
+/// Returns a pointer to an array with [x,y] the coordinates of the pixel
+
+char *Get_Highest_Pixel(SDL_Surface *image, int x, int y)
+{
+    Uint32 pixel = get_pixel(image, x, y);
+
+    Uint8 r, g, b;
+    SDL_GetRGB(pixel, image->format, &r, &g, &b);
+
+    while(r < 10 && g < 10 && b < 10 && y > 0)
     {
-        for(long j = 0; j < height; j++)
-        {
-            // Get the Pixel value at [i,j]
-            Uint32 pixel = get_pixel(img, i, j);
-            Uint8 r, g, b;
-            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+        y--;
 
-            if(r == 0 && g == 0 && b == 0) // if the rgb value of the pixel is (0,0,0) (black)
-            {
-                int arr[] = GetLastPixelCoor(img, width, height, i, j);
-
-                SDL_Rect temprect;
-
-                temprect.x = i;
-                temprect.y = j;
-                temprect.h = arr[1];
-                temprect.w = arr[0];
-
-                if(temprect.h + temprect.w > myrect.h + myrect.w) // if the Rect as a greater perimeter than myrect
-                {
-                    myrect = temprect; // Store the value of Rect in myrect
-                    i = temprect.w + temprect.x; // set i at i + Rect->w and j at j + Rect->h
-                    j = temprect.h + temprect.y;
-                }
-            }
-        }
+        pixel = get_pixel(image, x, y);
+        SDL_GetRGB(pixel, image->format, &r, &g, &b);
     }
 
+    char *p = malloc(2);
+
+    if (p == NULL)
+    {
+        errx(1, "Not enough memory!");
+    }
+
+    p[0] = x;
+    p[1] = y;
+
+    return p;    
+}
+
+/// Get the coordinates of the last pixel of the rect
+/// Returns a pointer to an array with [x,y] the coordinates of the pixel
+
+char *Get_Last_Pixel(SDL_Surface *image, int height, int width, int x, int y)
+{
+    Uint32 pixel = get_pixel(image, x, y);
+
+    Uint8 r, g, b;
+    SDL_GetRGB(pixel, image->format, &r, &g, &b);
+
+    while(r < 10 && g < 10 && b < 10 && y < height)
+    {
+        y++;
+
+        pixel = get_pixel(image, x, y);
+        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+    }
+
+    y--;
+    pixel = get_pixel(image, x, y);
+    SDL_GetRGB(pixel, image->format, &r, &g, &b);
+
+    while(r < 10 && g < 10 && b < 10 && x < width)
+    {
+        x++;
+
+        pixel = get_pixel(image, x, y);
+        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+    }
+    
+    x--;
+    char *p = malloc(2);
+
+    if (p == NULL)
+    {
+        errx(1, "Not enough memory!");
+    }
+    
+    p[0] = x;
+    p[1] = y;
+
+    return p;
+}
+
+/// Returns the Rect representing the Sudoku
+
+SDL_Rect *Get_rect(SDL_Surface *image, long width, long height)
+{
+    // Declarations
+    int i = 0; // x-axis
+    int j = width/2; // y-axis
+
+    Uint32 pixel;
+    Uint8 r, g, b;
+
+    SDL_Rect *myrect = malloc(sizeof(*image));
+
+    myrect->h = 0;
+    myrect->w = 0;
+    myrect->x = 0;
+    myrect->y = 0;
+
+    // Loop
+    while (i < width)
+    {
+        printf("at pixel [%i,j]", i);
+        pixel = get_pixel(image, i, j); // Get the value of the pixel at [i, j]
+        SDL_GetRGB(pixel, image->format, &r, &g, &b);
+
+        if (r < 10 && g < 10 && b < 10)
+        {
+            char *p = Get_Highest_Pixel(image, width, height); // Get & compute the rect
+            char *q = Get_Last_Pixel(image, width, height, i, j);
+
+            i = q[0]; // update the value of i (optimisation)
+        
+            int length = p[0] - q[0]; // computation of the length & width of the rect
+            int large = p[1] - q[1];
+
+            if (length + large > myrect->h + myrect->w) // if the rect detected is greater than previous
+            {
+                myrect->h = large; // save the greatest rect
+                myrect->w = length;
+                myrect->x = p[0];
+                myrect->y = p[1];
+            }
+
+            if(myrect->h + myrect->w >= (width + height)/2) // opti
+            {
+                break; // if we can't find a greater square in the image we break + return
+            }
+        }
+        i++; // parameter of loop
+    }
     return myrect;
 }
 
-void split_and_save() // crops the sudoku grid from the original image and save it.
+/// Final function, crop the image and save the grid to format .bmp
+
+void detect_rect(char *filename)
 {
-    // Load the image
+    Init_SDL(); // first things first
 
-    // call get_grid and save the rect result
+    SDL_Surface *image = display_bmp(filename); // load the image
+    SDL_Surface *destination = malloc(sizeof(image)); // destination surface to save
 
-    // use the rect result with SDL_BlitSurface() to crop the grid and save it onto a new surface
+    SDL_Rect *therect = Get_rect(image, image->w, image->h); // get the sudoku rect
 
-    // Save the surface with SDL_SaveBMP()
-}
+    if (SDL_BlitSurface(image, therect, destination, NULL) != 0) // paste the sudoku onto destination surface
+    {
+        // Error saving Bitmap
+        printf("SDL_BlitSurface failed: %s\n", SDL_GetError());
+    }
 
-void main(char *path) // the only purpose of this function is to test the work done here
-{
+    if (SDL_SaveBMP(destination, "sudoku_grid.bmp") != 0) // save the grid in .bmp format
+    {
+        // Error saving Bitmap
+        printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
+    }
 
+    //free the memory
+    SDL_FreeSurface(image);
+    SDL_FreeSurface(destination);
+    free(therect);
 }
