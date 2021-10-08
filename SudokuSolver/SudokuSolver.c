@@ -130,10 +130,10 @@ int solveSuduko(int grid[N][N], int row, int col)
     return 0;
 }
 
-char *sudokuStr[](int grid[N][N])
+char *sudokuStr(int grid[N][N])
 {
 	int count = 0;
-	char sudoku[81];
+	char *sudoku = malloc(81 * sizeof(char));
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++, count++)
@@ -141,7 +141,7 @@ char *sudokuStr[](int grid[N][N])
 			sudoku[count] = (char) grid[i][j];
 		}
 	}
-	return *sudoku;
+	return sudoku;
 }
 
 int main()
