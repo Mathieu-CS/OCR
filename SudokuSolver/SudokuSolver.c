@@ -138,7 +138,8 @@ char *sudokuStr(int grid[N][N])
 	{
 		for (int j = 0; j < N; j++, count++)
 		{
-			sudoku[count] = (char) grid[i][j];
+            char c = grid[i][j] + '0';
+			sudoku[count] = c;
 		}
 	}
 	return sudoku;
@@ -157,12 +158,16 @@ int main()
                        { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
                        { 0, 0, 5, 2, 0, 6, 3, 0, 0 } };
  
-    if (solveSuduko(grid, 0, 0)==1)
+    /*if (solveSuduko(grid, 0, 0)==1)
         print(grid);
     else
-        printf("No solution exists");
- 
-    char *solvedSudoku[81] = sudokuStr(grid);
-    printf("this : %s\n", solvedSudoku);
+        printf("No solution exists");*/
+
+    solveSuduko(grid, 0, 0);
+    FILE *fp;
+    fp = fopen("../SudokuGrid.txt", "w");
+    fputs(sudokuStr(grid), fp);
+    fputs("\n", fp);
+    fclose(fp);
     return 0;
 }
