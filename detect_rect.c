@@ -3,31 +3,7 @@
 #include "SDL/SDL_image.h"
 #include <stdio.h>
 #include "detect_rect.h"
-
-
-// Init the SDL
-int Init_SDL()
-{
-    if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO) != 0) {
-        printf("Unable to initialize SDL: %s\n", SDL_GetError());
-        return 1;
-    }
-    return 0;
-}
-
-SDL_Surface* display_bmp(char *file_name)
-{
-    SDL_Surface *image;
-
-    /* Load the BMP file into a surface */
-    image = SDL_LoadBMP(file_name);
-    if (image == NULL) {
-        fprintf(stderr, "Couldn't load %s: %s\n", file_name, SDL_GetError());
-        return NULL;
-    }
-
-    return image;
-}
+#include "operations.h"
 
 /*
  * Return the pixel value at (x, y)
@@ -73,13 +49,14 @@ char *Get_Highest_Pixel(SDL_Surface *image, int x, int y)
 
     while(r < 10 && g < 10 && b < 10 && y > 0)
     {
-        y--;
 
+        y--;
+        
         pixel = get_pixel(image, x, y);
         SDL_GetRGB(pixel, image->format, &r, &g, &b);
     }
 
-    char *p = malloc(2);
+    char *p = malloc(2 * sizeof(int));
 
     if (p == NULL)
     {
@@ -95,35 +72,38 @@ char *Get_Highest_Pixel(SDL_Surface *image, int x, int y)
 /// Get the coordinates of the last pixel of the rect
 /// Returns a pointer to an array with [x,y] the coordinates of the pixel
 
-char *Get_Last_Pixel(SDL_Surface *image, int height, int width, int x, int y)
+int *Get_Last_Pixel(SDL_Surface *image, int height, int width, int x, int y)
 {
     Uint32 pixel = get_pixel(image, x, y);
 
     Uint8 r, g, b;
     SDL_GetRGB(pixel, image->format, &r, &g, &b);
 
-    while(r < 10 && g < 10 && b < 10 && y < height)
+    while(r < 10 && g < 10 && b < 10 && y < height - 1)
     {
         y++;
 
+        SDL_LockSurface(image);
         pixel = get_pixel(image, x, y);
+        SDL_UnlockSurface(image);
+
         SDL_GetRGB(pixel, image->format, &r, &g, &b);
     }
 
-    y--;
     pixel = get_pixel(image, x, y);
+
     SDL_GetRGB(pixel, image->format, &r, &g, &b);
 
-    while(r < 10 && g < 10 && b < 10 && x < width)
+    while(r < 10 && g < 10 && b < 10 && x < width - 1)
     {
         x++;
 
         pixel = get_pixel(image, x, y);
+
         SDL_GetRGB(pixel, image->format, &r, &g, &b);
     }
-    
-    x--;
-    char *p = malloc(2);
+
+    int *p = malloc(2 * sizeof(int));
 
     if (p == NULL)
     {
@@ -132,7 +112,7 @@ char *Get_Last_Pixel(SDL_Surface *image, int height, int width, int x, int y)
     
     p[0] = x;
     p[1] = y;
-
+    
     return p;
 }
 
@@ -157,19 +137,28 @@ SDL_Rect *Get_rect(SDL_Surface *image, long width, long height)
     // Loop
     while (i < width)
     {
-        printf("at pixel [%i,j]", i);
+        //printf("at pixel [%i,%i]\n", i, j);
+        
         pixel = get_pixel(image, i, j); // Get the value of the pixel at [i, j]
+
         SDL_GetRGB(pixel, image->format, &r, &g, &b);
 
         if (r < 10 && g < 10 && b < 10)
         {
-            char *p = Get_Highest_Pixel(image, width, height); // Get & compute the rect
-            char *q = Get_Last_Pixel(image, width, height, i, j);
+            printf("square detected!\n");
+
+            char *p = Get_Highest_Pixel(image, i, j); // Get & compute the rect
+            printf("Highest pixel is at coordinate [%i,%i]\n", p[0], p[1]);
+            int *q = Get_Last_Pixel(image, width, height, i, j);
+            printf("Lasst pixel is at coordinate [%i,%i]\n", q[0], q[1]);
+        
+            int length = q[0] - p[0]; // computation of the length & width of the rect
+            int large = q[1] - p[1];
+
+            //printf("lenght is (x-axis): %i", length);
+            //printf("width is (y-axis): %i", large);
 
             i = q[0]; // update the value of i (optimisation)
-        
-            int length = p[0] - q[0]; // computation of the length & width of the rect
-            int large = p[1] - q[1];
 
             if (length + large > myrect->h + myrect->w) // if the rect detected is greater than previous
             {
@@ -179,10 +168,13 @@ SDL_Rect *Get_rect(SDL_Surface *image, long width, long height)
                 myrect->y = p[1];
             }
 
-            if(myrect->h + myrect->w >= (width + height)/2) // opti
+            if((myrect->h + myrect->w)/2 >= width + height) // opti
             {
                 break; // if we can't find a greater square in the image we break + return
             }
+
+            free(q);
+            free(p);
         }
         i++; // parameter of loop
     }
@@ -196,10 +188,34 @@ void detect_rect(char *filename)
     Init_SDL(); // first things first
 
     SDL_Surface *image = display_bmp(filename); // load the image
-    SDL_Surface *destination = malloc(sizeof(image)); // destination surface to save
 
+    SDL_Surface *destination;
+    Uint32 rmask, gmask, bmask, amask;
+
+    if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+    {
+        rmask = 0xff000000;
+        gmask = 0x00ff0000;
+        bmask = 0x0000ff00;
+        amask = 0x000000ff;
+    }
+    else
+    {
+        rmask = 0x000000ff;
+        gmask = 0x0000ff00;
+        bmask = 0x00ff0000;
+        amask = 0xff000000;
+    }
+
+    SDL_LockSurface(image);
     SDL_Rect *therect = Get_rect(image, image->w, image->h); // get the sudoku rect
+    SDL_UnlockSurface(image);
 
+    destination = SDL_CreateRGBSurface(0, therect->w, therect->h, 32, rmask, gmask, bmask, amask);
+    if (destination == NULL) {
+        printf("SDL_CreateRGBSurface() failed: %s", SDL_GetError());
+    }
+    
     if (SDL_BlitSurface(image, therect, destination, NULL) != 0) // paste the sudoku onto destination surface
     {
         // Error saving Bitmap

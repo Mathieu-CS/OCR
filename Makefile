@@ -19,10 +19,11 @@ LDLIBS = `pkg-config --libs sdl` -lSDL_image
 
 all: main
 
-main: detect_rect.o 
+main: detect_rect.o split.o operations.o
  
 clean:
 		${RM} *.o
 		${RM} *.d
 		${RM} detect_rect
+		${RM} split
 # END

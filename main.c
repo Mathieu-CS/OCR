@@ -1,4 +1,5 @@
 #include "detect_rect.h"
+#include "split.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -8,5 +9,8 @@ int main()
     p = "image_01.bmp";
 
     detect_rect(p);
+
+    split("sudoku_grid.bmp");
+    
     return 0;
 }
