@@ -162,15 +162,9 @@ void black_and_white(char* pathh,char* outputt)
         
     }
     SDL_SaveBMP (image_surface ,outputt);
-   // update_surface(screen_surface, image_surface);
-    // TODO: Wait for a key to be pressed.
-    //wait_for_keypressed();
-
-    // TODO: Free the image surface.
+   
     SDL_FreeSurface(image_surface);
 
-    // TODO: Free the screen surface.
-    //SDL_FreeSurface(screen_surface);
     
 
     
