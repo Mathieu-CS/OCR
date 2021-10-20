@@ -147,8 +147,27 @@ char *sudokuStr(int grid[N][N])
 
 int main()
 {
+    FILE *fo;
+    fo = fopen("../SudokuGridInput.txt", "r");
+    char *input = malloc(82 * sizeof(char));
+    input = fgets(input, 82, fo);
+    fclose(fo);
+
+
+    int grid[N][N];
+    
+    int count = 0;
+    for (size_t i = 0; i < 9; i++)
+    {
+        for (size_t j = 0; j < 9; j++, count++)
+        {
+            grid[i][j] = (int) input[count] - 48;;
+        }
+    }
+
+    
     // 0 means unassigned cells
-    int grid[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 },
+    /*int grid[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 },
                        { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
                        { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
                        { 0, 0, 3, 0, 1, 0, 0, 8, 0 },
@@ -156,7 +175,7 @@ int main()
                        { 0, 5, 0, 0, 9, 0, 6, 0, 0 },
                        { 1, 3, 0, 0, 0, 0, 2, 5, 0 },
                        { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
-                       { 0, 0, 5, 2, 0, 6, 3, 0, 0 } };
+                       { 0, 0, 5, 2, 0, 6, 3, 0, 0 } };*/
  
     /*if (solveSuduko(grid, 0, 0)==1)
         print(grid);
@@ -165,7 +184,7 @@ int main()
 
     solveSuduko(grid, 0, 0);
     FILE *fp;
-    fp = fopen("../SudokuGrid.txt", "w");
+    fp = fopen("../SudokuGridOutput.txt", "w");
     fputs(sudokuStr(grid), fp);
     fputs("\n", fp);
     fclose(fp);
