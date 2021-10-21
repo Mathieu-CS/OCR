@@ -18,5 +18,5 @@ int main ()
 {
     SDL_Surface* image_surface;
     image_surface = load_image("../prepross/Images/image_05.jpeg");
-    image_rotation(image_surface,35);
+    image_rotation(image_surface,35);//35 is the right degree to rotate image 5 
 }
