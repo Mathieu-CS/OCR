@@ -1,16 +1,17 @@
-#include "detect_rect.h"
-#include "split.h"
+#include <err.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <math.h>
+
+#include "operations.h"
+#include "grayscale.h"
+#include "Gauss.h"
+#include "Sobel.h"
 
 int main()
 {
-    char *p = malloc(sizeof("image_01.bmp"));
-    p = "image_01.bmp";
+    grayscale("Images/image_06.jpeg");
+    Gauss("grayscale.bmp");
+    Sobel("Gauss.bmp");
 
-    detect_rect(p);
-
-    split("sudoku_grid.bmp");
-    
     return 0;
 }
