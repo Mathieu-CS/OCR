@@ -47,7 +47,8 @@ void shuffle(int *array, size_t n)
     }
 }
 
-void save(char filename[], double hiddenWeights[numInputs][numHiddenNodes], double hiddenLayerBias[numHiddenNodes], double outputWeights[numHiddenNodes][numOutputs], double outputLayerBias[numOutputs])
+void save(char filename[], double hiddenWeights[numInputs][numHiddenNodes], double hiddenLayerBias[numHiddenNodes],
+	  double outputWeights[numHiddenNodes][numOutputs], double outputLayerBias[numOutputs])
 {
   FILE* fPtr;
 
@@ -96,6 +97,7 @@ void save(char filename[], double hiddenWeights[numInputs][numHiddenNodes], doub
 
 int main(int argc, char** argv)
 {
+  // SL Variable used to know whether the save or load feature is enabled.
   int SL = 0;
 
   if (argc == 3)
@@ -120,7 +122,7 @@ int main(int argc, char** argv)
 
   double hiddenWeights[numInputs][numHiddenNodes];
   double outputWeights[numHiddenNodes][numOutputs];
-  /*
+  
   if (SL == 2)
     {
       printf("test");
@@ -129,15 +131,15 @@ int main(int argc, char** argv)
       if (fPtr == NULL)
 	errx(1, "The file specified does not exist, cannot load.");
 
-      fscanf(fPtr, "%lf %lf %lf %lf \n%lf %lf \n%lf %lf \n%lf ",
-	     hiddenWeights[0][0], hiddenWeights[0][1], hiddenWeights[1][0], hiddenWeights[1][1],
-	     hiddenLayerBias[0], hiddenLayerBias[1],
-	     outputWeights[0][1], outputWeights[0][1],
-	     outputLayerBias[0], outputLayerBias[1]);
+      fscanf(fPtr, "%lf %lf %lf %lf \n%lf %lf \n%lf %lf \n%lf %lf ",
+	     &hiddenWeights[0][0], &hiddenWeights[0][1], &hiddenWeights[1][0], &hiddenWeights[1][1],
+	     &hiddenLayerBias[0], &hiddenLayerBias[1],
+	     &outputWeights[0][0], &outputWeights[0][1],
+	     &outputLayerBias[0], &outputLayerBias[1]);
 
       fclose(fPtr);
     }
-  */
+  
 
   static const int numTrainingSets = 4;
 
@@ -147,28 +149,30 @@ int main(int argc, char** argv)
   double training_outputs[4][1] =
     { {0.0f}, {1.0f}, {1.0f}, {0.0f} };
 	 
-
-  for (int i = 0; i < numInputs; i++)
+  if (SL != 2)
     {
-      for (int j = 0; j < numHiddenNodes; j++)
+      for (int i = 0; i < numInputs; i++)
 	{
-	  hiddenWeights[i][j] = init_weight();
+	  for (int j = 0; j < numHiddenNodes; j++)
+	    {
+	      hiddenWeights[i][j] = init_weight();
+	    }
 	}
-    }
 
-  for (int i = 0; i < numHiddenNodes; i++)
-    {
-      hiddenLayerBias[i] = init_weight();
-      for (int j = 0; j < numOutputs; j++)
+      for (int i = 0; i < numHiddenNodes; i++)
 	{
-	  outputWeights[i][j] = init_weight();
+	  hiddenLayerBias[i] = init_weight();
+	  for (int j = 0; j < numOutputs; j++)
+	    {
+	      outputWeights[i][j] = init_weight();
+	    }
 	}
-    }
 	 
 
-  for (int i = 0; i < numOutputs; i++)
-    {
-      outputLayerBias[i] = init_weight();
+      for (int i = 0; i < numOutputs; i++)
+	{
+	  outputLayerBias[i] = init_weight();
+	}
     }
   
   int trainingSetOrder[] = {0,1,2,3};
@@ -252,31 +256,31 @@ int main(int argc, char** argv)
     }
 
   // Print weights
-  printf("Final Hidden Weights\n[ ");
+  printf("Final Hidden Weights | [");
   for (int j=0; j<numHiddenNodes; j++) {
     printf("[ ");
     for(int k=0; k<numInputs; k++) {
       printf("%f ", hiddenWeights[k][j]);
     }
-    printf("] ");
+    printf("]");
   }
   printf("]\n");
     
-  printf("Final Hidden Biases\n[ ");
+  printf("Final Hidden Biases | [");
   for (int j=0; j<numHiddenNodes; j++) {
     printf("%f ", hiddenLayerBias[j]);
 	
   }
   printf("]\n");
-  printf("Final Output Weights");
+  printf("Final Output Weights | [");
   for (int j=0; j<numOutputs; j++) {
     printf("[ ");
     for (int k=0; k<numHiddenNodes; k++) {
-      printf("%f", outputWeights[k][j]);
+      printf("%f ", outputWeights[k][j]);
     }
     printf("]\n");
   }
-  printf("Final Output Biases\n[ ");
+  printf("Final Output Biases | [");
   for (int j=0; j<numOutputs; j++) {
     printf("%f ", outputLayerBias[j]);
         
