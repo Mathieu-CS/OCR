@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
+#include <err.h>
+
 // N is the size of the 2D matrix   N*N
 #define N 9
 
@@ -175,10 +176,17 @@ char *sudokuStr(int grid[N][N])
 	return sudoku;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        errx(1, "wrong number of args");
+    }
+
+    char* param = argv[1];
+    
     FILE *fo;
-    fo = fopen("../SudokuGridInput.txt", "r");
+    fo = fopen(param, "r");
     char *input = malloc(110 * sizeof(char));
     input = fgets(input, 110, fo);
     fclose(fo);
