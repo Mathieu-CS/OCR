@@ -1,5 +1,5 @@
 
-#include "pixel_operations.h"
+#include "operations.h"
 #include <math.h>
 #include <stdlib.h>
 #include "noise_cancel.h"
@@ -51,8 +51,9 @@ uint8_t Min(uint8_t r, uint8_t g, uint8_t b)
     return b;    
 }
 
-void Contrast(SDL_Surface *image)
-{
+void Contrast(char *path)
+{   
+    SDL_Surface* image=display_bmp(path);
     int c_value = image_pixel_average(image);
     int av = image_pixel_average(image);
 
@@ -82,8 +83,9 @@ void Contrast(SDL_Surface *image)
 
 
 
-void Gamma(SDL_Surface *image)
+void Gamma(char *path)
 {
+    SDL_Surface* image=display_bmp(path);
     float gamma_correction = 2.0f / (float) (255 - image_pixel_average(image));
 
     for (int x = 0; x < image->w; x++)

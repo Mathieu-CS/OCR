@@ -3,13 +3,11 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include "SDL/SDL_rotozoom.h"
-#include "../prepross/pixel_operations.h"
+#include "operations.h"
 
 
-void Sobel_filter (char *arg,char *arg2);
-void manny_filter(char *arg,char *arg2);
-void grayscale(char *arg );
-void image_rotation(SDL_Surface *image, double angle);
+
+void image_rotation(char *path, double angle);
 
 
 
