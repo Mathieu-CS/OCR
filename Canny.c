@@ -84,12 +84,12 @@ void RMS(SDL_Surface* image, int x , int y, int degree)
     switch (degree)
     {
     case 0:
-        pixel1 = get_pixel(image, x + 1, y + 1); // north east
-        pixel2 = get_pixel(image, x - 1, y + 1); // south west
+        pixel1 = get_pixel(image, x - 1, y); // west
+        pixel2 = get_pixel(image, x + 1, y); // east
         break;
     case 45:
-        pixel1 = get_pixel(image, x - 1, y); // west
-        pixel2 = get_pixel(image, x + 1, y); // eastmake 
+        pixel1 = get_pixel(image, x - 1, y - 1); // north west
+        pixel2 = get_pixel(image, x + 1, y - 1); // south east  
         break;
     case 90:
         pixel1 = get_pixel(image, x, y - 1); // north
