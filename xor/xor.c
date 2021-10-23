@@ -98,19 +98,18 @@ int main(int argc, char** argv)
 {
   int SL = 0;
 
-  
   if (argc == 3)
     {
       if (strcmp(argv[1], "save") == 0)
 	{
 	  SL = 1;
 	}
-      /*
-      if (argv[1] == "load")
+      
+      if (strcmp(argv[1], "load") == 0)
 	{
-	  SL = 2;
+	  SL = 2;	  
 	}
-      */
+      
     }
   
   double hiddenLayer[numHiddenNodes];
@@ -121,6 +120,24 @@ int main(int argc, char** argv)
 
   double hiddenWeights[numInputs][numHiddenNodes];
   double outputWeights[numHiddenNodes][numOutputs];
+  /*
+  if (SL == 2)
+    {
+      printf("test");
+      FILE* fPtr;
+      fPtr = fopen(argv[2], "r");
+      if (fPtr == NULL)
+	errx(1, "The file specified does not exist, cannot load.");
+
+      fscanf(fPtr, "%lf %lf %lf %lf \n%lf %lf \n%lf %lf \n%lf ",
+	     hiddenWeights[0][0], hiddenWeights[0][1], hiddenWeights[1][0], hiddenWeights[1][1],
+	     hiddenLayerBias[0], hiddenLayerBias[1],
+	     outputWeights[0][1], outputWeights[0][1],
+	     outputLayerBias[0], outputLayerBias[1]);
+
+      fclose(fPtr);
+    }
+  */
 
   static const int numTrainingSets = 4;
 
