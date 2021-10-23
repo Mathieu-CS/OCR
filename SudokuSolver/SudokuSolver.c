@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 
     solveSuduko(grid, 0, 0);
     FILE *fp;
-    fp = fopen("../SudokuGridOutput.txt", "w");
+    fp = fopen("SudokuGridOutput.txt", "w");
     fputs(sudokuStr(grid), fp);
     // fputs("\n", fp);
     fclose(fp);
