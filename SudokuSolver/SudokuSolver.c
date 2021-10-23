@@ -133,14 +133,44 @@ int solveSuduko(int grid[N][N], int row, int col)
 char *sudokuStr(int grid[N][N])
 {
 	int count = 0;
-	char *sudoku = malloc(81 * sizeof(char));
+	char *sudoku = malloc((81 + 29) * sizeof(char));
 	for (int i = 0; i < N; i++)
 	{
-		for (int j = 0; j < N; j++, count++)
+		for (int j = 0; j < N; j++)
 		{
-            char c = grid[i][j] + '0';
+            char c;
+
+            if (grid[i][j] == 0)
+            {
+                c = '.';
+            }
+            else
+            {
+                c = grid[i][j] + '0';
+            }
+            
 			sudoku[count] = c;
+            count++;
+
+            if (j == 2 || j == 5)
+            {
+                sudoku[count] = ' ';
+                count++;
+            }
+            
+            if (j == 8)
+            {
+                sudoku[count] = '\n';
+                count++;
+            }
 		}
+
+        if (i == 2 || i == 5)
+        {
+            sudoku[count] = '\n';
+            count++;
+        }
+        
 	}
 	return sudoku;
 }
@@ -149,8 +179,8 @@ int main()
 {
     FILE *fo;
     fo = fopen("../SudokuGridInput.txt", "r");
-    char *input = malloc(82 * sizeof(char));
-    input = fgets(input, 82, fo);
+    char *input = malloc(110 * sizeof(char));
+    input = fgets(input, 110, fo);
     fclose(fo);
 
 
@@ -159,9 +189,22 @@ int main()
     int count = 0;
     for (size_t i = 0; i < 9; i++)
     {
-        for (size_t j = 0; j < 9; j++, count++)
+        for (size_t j = 0; j < 9; count++)
         {
-            grid[i][j] = (int) input[count] - 48;;
+            if (input[count] != ' ' && input[count] != '\n')
+            {
+                if (input[count] == '.')
+                {
+                    grid[i][j] = 0;
+                }
+                else
+                {
+                    grid[i][j] = (int) input[count] - 48;
+                j++;
+                }
+            }
+            
+            
         }
     }
 
@@ -186,7 +229,7 @@ int main()
     FILE *fp;
     fp = fopen("../SudokuGridOutput.txt", "w");
     fputs(sudokuStr(grid), fp);
-    fputs("\n", fp);
+    // fputs("\n", fp);
     fclose(fp);
     return 0;
 }
