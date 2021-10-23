@@ -1,9 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <err.h>
+#include <string.h>
 
 #define LR 0.1f
 #define EPOCHS 50000
+
+#define numInputs 2
+#define numHiddenNodes  2
+#define numOutputs 1
+
+
+#define DATA_SIZE 1000
 
 // Action function
 double sigmoid(double x)
@@ -38,12 +47,72 @@ void shuffle(int *array, size_t n)
     }
 }
 
-int main()
+void save(char filename[], double hiddenWeights[numInputs][numHiddenNodes], double hiddenLayerBias[numHiddenNodes], double outputWeights[numHiddenNodes][numOutputs], double outputLayerBias[numOutputs])
 {
-  static const int numInputs = 2;
-  static const int numHiddenNodes = 2;
-  static const int numOutputs = 1;
+  FILE* fPtr;
 
+  fPtr = fopen(filename, "w");
+
+  if (fPtr == NULL)
+    errx(1, "Unable to create file.\n");
+    
+  //Final Hidden Weights
+  for (int j=0; j<numHiddenNodes; j++) {
+    for(int k=0; k<numInputs; k++) {
+      fprintf(fPtr, "%f ", hiddenWeights[k][j]);
+    }
+  }
+  fprintf(fPtr, "\n");
+    
+  //Hidden Biases
+  for (int j=0; j<numHiddenNodes; j++) {
+    fprintf(fPtr, "%f ", hiddenLayerBias[j]);
+	
+  }
+  
+  fprintf(fPtr, "\n");
+  
+  // Output Weights
+  for (int j=0; j<numOutputs; j++) {
+    for (int k=0; k<numHiddenNodes; k++) {
+      fprintf(fPtr, "%f ", outputWeights[k][j]);
+    }
+  }
+  
+  fprintf(fPtr, "\n");
+
+  // Output Layer Biases
+  for (int j=0; j<numOutputs; j++) {
+    fprintf(fPtr, "%f ", outputLayerBias[j]);
+        
+  }
+  
+  fprintf(fPtr, "\n");
+
+  fclose(fPtr);
+  
+}
+
+
+int main(int argc, char** argv)
+{
+  int SL = 0;
+
+  
+  if (argc == 3)
+    {
+      if (strcmp(argv[1], "save") == 0)
+	{
+	  SL = 1;
+	}
+      /*
+      if (argv[1] == "load")
+	{
+	  SL = 2;
+	}
+      */
+    }
+  
   double hiddenLayer[numHiddenNodes];
   double outputLayer[numOutputs];
 
@@ -60,7 +129,7 @@ int main()
 
   double training_outputs[4][1] =
     { {0.0f}, {1.0f}, {1.0f}, {0.0f} };
-
+	 
 
   for (int i = 0; i < numInputs; i++)
     {
@@ -78,6 +147,7 @@ int main()
 	  outputWeights[i][j] = init_weight();
 	}
     }
+	 
 
   for (int i = 0; i < numOutputs; i++)
     {
@@ -196,6 +266,8 @@ int main()
   }
   printf("]\n");
 
+  if (SL == 1)
+    save(argv[2], hiddenWeights, hiddenLayerBias, outputWeights, outputLayerBias);
 
   return 0;
 }
