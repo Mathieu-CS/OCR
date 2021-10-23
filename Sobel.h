@@ -3,6 +3,6 @@
 
 #include <math.h>
 
-void Sobel(char* path);
+void Sobel(char* path, double **M);
 
 #endif

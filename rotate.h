@@ -2,7 +2,7 @@
 #define ROTATE_H_
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_rotozoom.h>
+#include "SDL/SDL_rotozoom.h"
 #include "../prepross/pixel_operations.h"
 
 

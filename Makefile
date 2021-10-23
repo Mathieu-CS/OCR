@@ -16,7 +16,7 @@ LDLIBS = `pkg-config --libs sdl` -lSDL_image -lm
 
 all: main
 
-main: grayscale.o Gauss.o operations.o Sobel.o
+main: grayscale.o Gauss.o operations.o Sobel.o Canny.o
 
 clean:
 	${RM} *.o

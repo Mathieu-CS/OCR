@@ -74,8 +74,8 @@ int Get_Gy(SDL_Surface* image, int x, int y)
 // compute and return the gradiant value of the pixel (to put onto return matrix in Sobel())
 double get_edge_direction(double x, double y)
 {
-    double thisAngle = (atan2(x,y)/3.14159) * 180.0;    // Calculate actual direction of edge
-	
+    double thisAngle = atan2(y, x) * 180.0/3.14159;    // Calculate actual direction of edge
+
 	/* Convert actual edge direction to approximate value */
 	if ( ( (thisAngle < 22.5) && (thisAngle > -22.5) ) || (thisAngle > 157.5) || (thisAngle < -157.5) )
 		thisAngle = 0;
@@ -89,18 +89,10 @@ double get_edge_direction(double x, double y)
 }
 
 // Applies Sobel filter onto the image and returns gradiant matrix
-void Sobel(char* path)
+void Sobel(char* path, double **M)
 {
-    Init_SDL();
     SDL_Surface* image = display_bmp(path);
     
-    //double **M = calloc(image->w, sizeof(double)); // initialisation of the Matrix
-
-    /*for (int i = 0; i < image->w; i++)
-    {
-        M[i] = calloc(image->h, sizeof(double));
-    } // end of init*/
-
     SDL_Surface *destination;
 
     destination = SDL_CreateRGBSurface(0, image->w, image->h, 32, 0, 0, 0, 0); 
@@ -114,16 +106,11 @@ void Sobel(char* path)
         {
             x = Get_Gx(image, i, j);
             y = Get_Gy(image, i, j);
-
-            /*if (y != 0)
-            {
-                M[i][j] = get_edge_direction(x,y); // fill the matrix with the direction
-            }*/
+            M[i][j] = get_edge_direction(x,y); // fill the matrix with the direction
 
             int value =(int) sqrt(pow(x,2.0) + pow(y,2.0));
             
             Uint32 pixel = SDL_MapRGB(image->format, value, value, value);
-            //printf("put pixel of value %i at coordinate [%i;%i]\n", value, i, j);
 
             put_pixel(destination, i, j, pixel); // apply the Sobel filter
         }
