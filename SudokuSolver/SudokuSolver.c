@@ -200,7 +200,7 @@ int main()
                 else
                 {
                     grid[i][j] = (int) input[count] - 48;
-                j++;
+                    j++;
                 }
             }
             
