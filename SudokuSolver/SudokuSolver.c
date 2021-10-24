@@ -184,11 +184,12 @@ int main(int argc, char *argv[])
     }
 
     char* param = argv[1];
+    char filename[15];
     
     FILE *fo;
     fo = fopen(param, "r");
-    char *input = malloc(110 * sizeof(char));
-    input = fgets(input, 110, fo);
+    char *input = malloc(111 * sizeof(char));
+    input = fgets(input, 111, fo);
     fclose(fo);
 
 
@@ -198,21 +199,17 @@ int main(int argc, char *argv[])
     for (size_t i = 0; i < 9; i++)
     {
         for (size_t j = 0; j < 9; count++)
-        {
-            if (input[count] != ' ' && input[count] != '\n')
+        { 
+            if (input[count] == '.')
             {
-                if (input[count] == '.')
-                {
-                    grid[i][j] = 0;
-                }
-                else
-                {
-                    grid[i][j] = (int) input[count] - 48;
-                    j++;
-                }
+                grid[i][j] = 0;
             }
-            
-            
+            else
+            {
+                char c = input[count];
+                grid[i][j] = c - '0';
+            }
+            j++;
         }
     }
 
@@ -235,9 +232,11 @@ int main(int argc, char *argv[])
 
     solveSuduko(grid, 0, 0);
     FILE *fp;
-    fp = fopen("SudokuGridOutput.txt", "w");
+
+    sprintf(filename, "%s.result", param);
+    fp = fopen(filename, "w");
     fputs(sudokuStr(grid), fp);
-    // fputs("\n", fp);
+    fputs("\n", fp);
     fclose(fp);
     return 0;
 }
