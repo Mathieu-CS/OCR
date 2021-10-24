@@ -136,7 +136,7 @@ int main(int argc, char** argv)
 	errx(1, "The file specified does not exist, cannot load.");
 
       int temp = fscanf(fPtr, "%lf %lf %lf %lf \n%lf %lf \n%lf %lf \n%lf %lf ",
-	     &hiddenWeights[0][0], &hiddenWeights[0][1], &hiddenWeights[1][0], &hiddenWeights[1][1],
+	     &hiddenWeights[0][0], &hiddenWeights[1][0], &hiddenWeights[0][1], &hiddenWeights[1][1],
 	     &hiddenLayerBias[0], &hiddenLayerBias[1],
 	     &outputWeights[0][0], &outputWeights[0][1],
 	     &outputLayerBias[0], &outputLayerBias[1]);
