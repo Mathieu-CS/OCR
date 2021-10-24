@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
+#include <err.h>
+
 // N is the size of the 2D matrix   N*N
 #define N 9
 
@@ -133,24 +134,62 @@ int solveSuduko(int grid[N][N], int row, int col)
 char *sudokuStr(int grid[N][N])
 {
 	int count = 0;
-	char *sudoku = malloc(81 * sizeof(char));
+	char *sudoku = malloc((81 + 29) * sizeof(char));
 	for (int i = 0; i < N; i++)
 	{
-		for (int j = 0; j < N; j++, count++)
+		for (int j = 0; j < N; j++)
 		{
-            char c = grid[i][j] + '0';
+            char c;
+
+            if (grid[i][j] == 0)
+            {
+                c = '.';
+            }
+            else
+            {
+                c = grid[i][j] + '0';
+            }
+            
 			sudoku[count] = c;
+            count++;
+
+            if (j == 2 || j == 5)
+            {
+                sudoku[count] = ' ';
+                count++;
+            }
+            
+            if (j == 8)
+            {
+                sudoku[count] = '\n';
+                count++;
+            }
 		}
+
+        if (i == 2 || i == 5)
+        {
+            sudoku[count] = '\n';
+            count++;
+        }
+        
 	}
 	return sudoku;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        errx(1, "wrong number of args");
+    }
+
+    char* param = argv[1];
+    char filename[15];
+    
     FILE *fo;
-    fo = fopen("../SudokuGridInput.txt", "r");
-    char *input = malloc(82 * sizeof(char));
-    input = fgets(input, 82, fo);
+    fo = fopen(param, "r");
+    char *input = malloc(111 * sizeof(char));
+    input = fgets(input, 111, fo);
     fclose(fo);
 
 
@@ -159,9 +198,18 @@ int main()
     int count = 0;
     for (size_t i = 0; i < 9; i++)
     {
-        for (size_t j = 0; j < 9; j++, count++)
-        {
-            grid[i][j] = (int) input[count] - 48;;
+        for (size_t j = 0; j < 9; count++)
+        { 
+            if (input[count] == '.')
+            {
+                grid[i][j] = 0;
+            }
+            else
+            {
+                char c = input[count];
+                grid[i][j] = c - '0';
+            }
+            j++;
         }
     }
 
@@ -184,7 +232,9 @@ int main()
 
     solveSuduko(grid, 0, 0);
     FILE *fp;
-    fp = fopen("../SudokuGridOutput.txt", "w");
+
+    sprintf(filename, "%s.result", param);
+    fp = fopen(filename, "w");
     fputs(sudokuStr(grid), fp);
     fputs("\n", fp);
     fclose(fp);
