@@ -247,7 +247,7 @@ SDL_Surface* lineTracePos(struct triple positions[], int Nx, int Ny, int len,flo
 	Uint8 r, g, b;
 	SDL_GetRGB(pixel, result->format, &r, &g, &b);
 	pixel = SDL_MapRGB(result->format, 255, 0, 0);
-	printf("%i", len);
+	//printf("%i", len);
 	for(int i = 0 ; i < len ; i++)
 	{
 		struct triple pos = positions[i];
