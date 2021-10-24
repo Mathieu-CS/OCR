@@ -197,7 +197,7 @@ struct triple* analysis(SDL_Surface* image, int seuil,int* len, struct triple *p
 				float xb = si*1.0/npix;
 				float yb = sj*1.0/npix;
 				struct triple position = {xb, yb,npix};
-				printf("%f , %f,%f\n",xb, yb,npix);
+				//printf("%f , %f,%f\n",xb, yb,npix);
 				positions[*len] = position;
 				*len +=1;
 				free(pile->items);
@@ -205,7 +205,7 @@ struct triple* analysis(SDL_Surface* image, int seuil,int* len, struct triple *p
 			}
 		}
 	}
-	printf("Nombre de tache : %i\n", compteur);
+	printf("Nombre de tache pour hough : %i\n", compteur);
 	SDL_FreeSurface(result);
 	return positions;
 }

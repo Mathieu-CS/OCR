@@ -12,15 +12,14 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c99 -O3 -fsanitize=address
 #Linker options (probably always empty)
 LDFLAGS = -fsanitize=address
 # libs and path for linker
-LDLIBS = `pkg-config --libs sdl` -lSDL_image -lm
+LDLIBS = `pkg-config --libs sdl` -lSDL_image -lSDL_gfx -lm
 
 all: main
 
-main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o
+main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o houghv3.o stack.o rotate.o
 
 clean:
 	${RM} *.o
 	${RM} *.d
 	${RM} *.bmp
 	${RM} main
-

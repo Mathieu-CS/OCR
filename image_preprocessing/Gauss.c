@@ -156,7 +156,7 @@ void Gauss(char* path)
     SDL_Surface* image = display_bmp(path);
     SDL_Surface *destination;
 
-    printf("Noise removing : applying Gaussian blur...");
+    printf("Noise removing : applying Gaussian blur...\n");
 
     destination = SDL_CreateRGBSurface(0, image->w, image->h, 32, 0, 0, 0, 0);
 

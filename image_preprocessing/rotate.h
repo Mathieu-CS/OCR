@@ -5,10 +5,6 @@
 //#include "SDL/SDL_rotozoom.h"
 #include "operations.h"
 
-
-
 void image_rotation(char *path, double angle);
-
-
 
 #endif
