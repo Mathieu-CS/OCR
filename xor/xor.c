@@ -5,7 +5,6 @@
 #include <string.h>
 
 #define LR 0.1f
-#define EPOCHS 50000
 
 #define numInputs 2
 #define numHiddenNodes  2
@@ -100,19 +99,24 @@ int main(int argc, char** argv)
   // SL Variable used to know whether the save or load feature is enabled.
   int SL = 0;
 
-  if (argc == 3)
+  if (argc != 2 && argc != 4)
+    errx(1, "Invalid parameters");
+
+  if (argc == 4)
     {
-      if (strcmp(argv[1], "save") == 0)
+      if (strcmp(argv[2], "save") == 0)
 	{
 	  SL = 1;
 	}
       
-      if (strcmp(argv[1], "load") == 0)
+      if (strcmp(argv[2], "load") == 0)
 	{
 	  SL = 2;	  
 	}
       
     }
+
+  int EPOCHS = strtol(argv[1], (char **)NULL, 10);
   
   double hiddenLayer[numHiddenNodes];
   double outputLayer[numOutputs];
@@ -127,7 +131,7 @@ int main(int argc, char** argv)
     {
       printf("test");
       FILE* fPtr;
-      fPtr = fopen(argv[2], "r");
+      fPtr = fopen(argv[3], "r");
       if (fPtr == NULL)
 	errx(1, "The file specified does not exist, cannot load.");
 
@@ -288,7 +292,7 @@ int main(int argc, char** argv)
   printf("]\n");
 
   if (SL == 1)
-    save(argv[2], hiddenWeights, hiddenLayerBias, outputWeights, outputLayerBias);
+    save(argv[3], hiddenWeights, hiddenLayerBias, outputWeights, outputLayerBias);
 
   return 0;
 }
