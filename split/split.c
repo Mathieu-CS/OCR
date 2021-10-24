@@ -22,7 +22,7 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
     SDL_Surface* tosave = SDL_CreateRGBSurface(0, splitrect->w, splitrect->h, 32, 0, 0, 0, 0);
 
     int k = 0;
-    char tot[12];
+    char tot[15];
 
     int i = x0;
     int j = y0;
@@ -33,7 +33,7 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
         {
             splitrect->x = i;
             splitrect->y = j;
-            snprintf(tot, 12, "%i.bmp", k);
+            snprintf(tot, 15, "%i.bmp", k);
 
             SDL_BlitSurface(image, splitrect, tosave, NULL);
 

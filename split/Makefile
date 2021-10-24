@@ -10,16 +10,16 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c99 -O3
 # -O3 is an optimization function (https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 
 #Linker options (probably always empty)
-LDFLAGS =
+LDFLAGS = 
 # libs and path for linker
 LDLIBS = `pkg-config --libs sdl` -lSDL_image -lSDL_gfx -lm
 
-all: main
+all: split
 
-main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o houghv3.o stack.o rotate.o
+split : split.o operations.o
 
 clean:
 	${RM} *.o
 	${RM} *.d
 	${RM} *.bmp
-	${RM} main
+	${RM} split
