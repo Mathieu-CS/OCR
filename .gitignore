@@ -4,7 +4,6 @@
 *.out
 grid_00.result
 main
-solver
-xor
+
 
 *~
