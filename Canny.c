@@ -125,6 +125,7 @@ void RMS(SDL_Surface* image, int x , int y, int degree)
 // Apply the GMT over the whole image
 void NonMaximumEdgeSuppression(SDL_Surface* image, double** M)
 {
+    printf("Canny : applying gradient magnitude thresholding...\n");
     //SDL_Surface * destination = SDL_CreateRGBSurface(0, image->w, image->h, 32, 0, 0, 0, 0);
 
     for (int i = 1; i < image->w - 2; i++)
@@ -216,6 +217,7 @@ void Canny(char* path, double **M)
 
     NonMaximumEdgeSuppression(image, M);
 
+    printf("Canny : applying hysteresis thresholding...\n");
     for (int i = 1; i < image->w - 2; i++)
     {
         for (int j = 1; j < image->h - 2; j++)
@@ -228,6 +230,10 @@ void Canny(char* path, double **M)
     {
         // Error saving Bitmap
         printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
+    }
+    else
+    {
+        printf("Canny : image saved\n");
     }
 
     SDL_FreeSurface(image);

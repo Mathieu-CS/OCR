@@ -97,6 +97,8 @@ void Sobel(char* path, double **M)
 
     destination = SDL_CreateRGBSurface(0, image->w, image->h, 32, 0, 0, 0, 0); 
 
+    printf("Sobel : applying Sobel filter...\n");
+
     int x;
     int y;
 
@@ -121,6 +123,8 @@ void Sobel(char* path, double **M)
         // Error saving Bitmap
         printf("SDL_SaveBMP failed: %s\n", SDL_GetError());
     }
+
+    printf("Sobel : Image saved!\n");
 
     SDL_FreeSurface(image);
     SDL_FreeSurface(destination);

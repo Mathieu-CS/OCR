@@ -6,7 +6,6 @@
 #include "SDL/SDL_image.h"
 #include "operations.h"
 #include "grayscale.h"
-#include "rotate.h"
 #include "noise_cancel.h"
 #include "Gauss.h"
 #include "Canny.h"
@@ -19,14 +18,14 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
 
     if (argv[2][0]=='r')
      {
-        image_rotation(argv[1],35);
+        //image_rotation(argv[1],35);
      }
-     else{image_rotation(argv[1],0);}
+     else{}//image_rotation(argv[1],0);}
 
     
     //grayscale
     
-    grayscale("rotated.bmp");
+    grayscale(argv[1]);
     //noise removing 
     if (argv[3][0]=='g')
     {
@@ -39,7 +38,7 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
     {
         Gauss("grayscale.bmp");
     }
-     
+    printf("Noise removed !\n");
 
     SDL_Surface* image = display_bmp("Gauss.bmp");
 

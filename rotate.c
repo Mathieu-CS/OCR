@@ -1,17 +1,19 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include <SDL/SDL_rotozoom.h>
+//#include <SDL/SDL_rotozoom.h>
 #include "operations.h"
 
 
 void image_rotation(char *path, double angle)
 {
+  printf("Rotation of the image...\n");
   SDL_Surface *rotation = NULL;
   SDL_Surface* image=display_bmp(path);
 
   rotation = rotozoomSurface(image, angle, 1.0, 2);
 
   SDL_SaveBMP(rotation, "rotated.bmp");
+  printf("Image rotated!");
   SDL_FreeSurface(image);
   SDL_FreeSurface(rotation);
 }
