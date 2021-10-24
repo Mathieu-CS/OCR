@@ -14,9 +14,10 @@ LDFLAGS = -fsanitize=address
 # libs and path for linker
 LDLIBS = `pkg-config --libs sdl` -lSDL_image -lm
 
-all: main xor
+all: main sudokusolver xor
 
 main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o
+sudokusolver : SudokuSolver
 xor : xor.o
 
 clean:
@@ -24,3 +25,5 @@ clean:
 	${RM} *.d
 	${RM} *.bmp
 	${RM} main
+	${RM} SudokuSolver
+	${RM} xor

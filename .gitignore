@@ -3,5 +3,7 @@
 *.o
 *.out
 main
+SudokuSolver
+xor
 
 *~
