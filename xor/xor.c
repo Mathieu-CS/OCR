@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 	     &outputWeights[0][0], &outputWeights[0][1],
 	     &outputLayerBias[0], &outputLayerBias[1]);
 
-      if (temp < 10)
+      if (temp < 9)
 	errx(1, "Invalid file");
 
       fclose(fPtr);
