@@ -1,0 +1,7 @@
+# C .o, .d and binaries
+*.d
+*.o
+*.out
+main
+
+*~

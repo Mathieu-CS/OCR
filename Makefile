@@ -14,9 +14,10 @@ LDFLAGS = -fsanitize=address
 # libs and path for linker
 LDLIBS = `pkg-config --libs sdl` -lSDL_image -lm
 
-all: main
+all: main xor
 
-main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o 
+main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o
+xor : xor.o
 
 clean:
 	${RM} *.o
