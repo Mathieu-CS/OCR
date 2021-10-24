@@ -30,7 +30,7 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
     if (argv[3][0]=='g')
     {
         Gauss("grayscale.bmp");
-        Gamma("gauss.bmp");
+        Gamma("Gauss.bmp");
         Contrast("gamma.bmp");
         
     }

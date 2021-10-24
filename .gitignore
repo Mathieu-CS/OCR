@@ -2,8 +2,9 @@
 *.d
 *.o
 *.out
+grid_00.result
 main
-SudokuSolver
+solver
 xor
 
 *~
