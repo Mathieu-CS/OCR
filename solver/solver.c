@@ -196,20 +196,32 @@ int main(int argc, char *argv[])
     int grid[N][N];
     
     int count = 0;
-    for (size_t i = 0; i < 9; i++)
+    int line = 0;
+    for (size_t i = 0; i < 9;)
     {
-        for (size_t j = 0; j < 9; count++)
-        { 
-            if (input[count] == '.')
-            {
-                grid[i][j] = 0;
+        if (input[count] != '\n' || line % 3 == 0)
+        {
+            for (size_t j = 0; j < 9; count++)
+            { 
+                if (input[count] != ' ' && input[count] != '\n')
+                {
+                    if (input[count] == '.')
+                    {
+                        grid[i][j] = 0;
+                    }
+                    else
+                    {
+                        char c = input[count];
+                        grid[i][j] = c - '0';
+                    }
+                    j++;
+                }
             }
-            else
-            {
-                char c = input[count];
-                grid[i][j] = c - '0';
-            }
-            j++;
+            i++;
+        }
+        else
+        {
+            line++;
         }
     }
 
