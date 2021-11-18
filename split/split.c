@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
+#include "SDL/SDL_rotozoom.h"
 #include "operations.h"
 
 void clean(SDL_Surface* image, int width, int height)
@@ -86,7 +88,10 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
             SDL_BlitSurface(image, splitrect, tosave, NULL);
             clean(tosave, tosave->w, tosave->h);
 
-            SDL_SaveBMP(tosave, tot);
+            double zoomx = ((double) 28) / tosave->w;
+            double zoomy = ((double) 28) / tosave->h;
+
+            SDL_SaveBMP(rotozoomSurfaceXY(tosave, 0, zoomx, zoomy, 0), tot);
 
             k++;
 
