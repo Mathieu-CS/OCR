@@ -7,6 +7,54 @@
 #include "SDL/SDL_image.h"
 #include "operations.h"
 
+void clean(SDL_Surface* image, int width, int height)
+{
+    int limitw = width/5;
+    int limith = height/5;
+    Uint32 white = SDL_MapRGB(image->format, 255, 255, 255);
+
+    // up clean
+
+    for (int i = 0; i < limith; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            put_pixel(image, j, i, white);
+        }
+    }
+    
+    // down clean
+
+    for (int i = height - limith; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            put_pixel(image, j, i, white);
+        }
+    }
+
+    // left clean
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < limitw; j++)
+        {
+            put_pixel(image, j, i, white);
+        }
+    }
+    
+    // right clean
+
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = width - limitw; j < width; j++)
+        {
+            put_pixel(image, j, i, white);   
+        }
+    }
+}
+
+// splits the image in 81 subimages
 void split(SDL_Surface* image, int x0, int y0, int width, int length)
 {
     int pathx = width/9;
@@ -36,6 +84,7 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
             snprintf(tot, 15, "%i.bmp", k);
 
             SDL_BlitSurface(image, splitrect, tosave, NULL);
+            clean(tosave, tosave->w, tosave->h);
 
             SDL_SaveBMP(tosave, tot);
 
