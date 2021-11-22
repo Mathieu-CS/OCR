@@ -226,11 +226,96 @@ void black_and_white(char* pathh,char* outputt)
            
             pixel = SDL_MapRGB(image_surface->format, r, g, b);
             put_pixel(image_surface, x, y, pixel);
-        }
-        
-        
+        } 
     }
     SDL_SaveBMP (image_surface ,outputt);
    
     SDL_FreeSurface(image_surface);
 }
+unsigned long *get_histogram(SDL_Surface* image_surface, unsigned long *array)
+{
+  
+    int width = image_surface->w;
+    int height = image_surface->h;
+    for(int i = 0; i < width; i++)
+        for(int j = 0; j < height; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r,g,b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            g=b;
+            Uint8 n = r;
+            if(array[n] < 4294967295)
+                array[n] += 1;
+        }
+    return array;
+}
+
+Uint8 get_threshold(unsigned long *histogram, int total)
+{
+    unsigned long sum = 0, wf = 0, sumb = 0;
+    unsigned long mb, mf;
+    float between = 0, max = 0;
+    Uint8 threshold1 = 0, threshold2 =0;
+    for(int i = 0; i < 256; i++)
+        sum += i * histogram[i];
+    unsigned long wb = 0;
+    for(int i = 0; i < 256; i++)
+    {
+        wb += histogram[i];
+        if(wb == 0)
+            continue;
+        wf = total - wb;
+        if( wf == 0)
+            break;
+        sumb += i * histogram[i];
+        mb = sumb / wb;
+        mf = (sum - sumb) / wf;
+        between = wb * wf * (mb - mf) * (mb - mf);
+        if(between >= max)
+        {
+            threshold1 = i;
+            if(between > max)
+                threshold2 = i;
+            max = between;
+        }
+    }
+    Uint8 threshold = ((threshold1 + threshold2) / 2);
+    //printf("threshold = %u\n", threshold);
+    return threshold;
+}
+void otsu_treshold(char* path)
+{
+    SDL_Surface* image_surface;
+    image_surface = display_bmp(path);
+    int width = image_surface->w;
+    int height = image_surface->h;
+
+    unsigned long *hist = malloc(256 * sizeof(unsigned long));
+    for(int i = 0; i < 256; i++)
+        hist[i] = 0;
+    hist = get_histogram(image_surface, hist);
+    Uint8 threshold = get_threshold(hist, width*height);
+    for(int i = 0; i < width; i++)
+    {
+        for(int j = 0; j < height; j++)
+        {
+            Uint32 pixel = get_pixel(image_surface, i, j);
+            Uint8 r,g,b;
+            SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+            
+            if(r > threshold)
+                r=g=b=255;
+            else
+                r=g=b=0;
+
+            pixel = SDL_MapRGB(image_surface->format, r, g, b);
+            put_pixel(image_surface, i, j, pixel);
+        }
+    }
+    free(hist);
+    SDL_SaveBMP (image_surface ,"blackwhite.bmp");
+    SDL_FreeSurface(image_surface);
+    
+}
+

@@ -137,7 +137,7 @@ SDL_Surface* lineTrace(SDL_Surface* surface,struct line lines[], int Nx, int Ny,
 	Uint32 pixel = get_pixel(surface,0,0);
 	Uint8 r, g, b;
 	SDL_GetRGB(pixel, surface->format, &r, &g, &b);
-	pixel = SDL_MapRGB(surface->format, 255, 0, 0);
+	pixel = SDL_MapRGB(surface->format, 0, 255, 0);
 	for(int i = 0 ; i < len ; i++)
 	{
 		struct line Line = lines[i];
@@ -194,8 +194,8 @@ struct triple* analysis(SDL_Surface* image, int seuil,int* len, struct triple *p
 					npix += 1;
 					pile = coloriage_pixel_stack(image, result, Nx,Ny,seuil, pixel, pile,tupple2.e1,tupple2.e2);
 				}
-				float xb = si*1.0/npix;
-				float yb = sj*1.0/npix;
+				float xb = si*1.0;
+				float yb = sj*1.0;
 				struct triple position = {xb, yb,npix};
 				//printf("%f , %f,%f\n",xb, yb,npix);
 				positions[*len] = position;
@@ -224,14 +224,14 @@ struct stack* coloriage_pixel_stack(SDL_Surface* image, SDL_Surface* result, int
 	{
 		int k = voisins[b].e1;
 		int l = voisins[b].e2;
-		if((k>=0) &&(k<Ny) && (l>=0) && (l <Nx))
+		if((k>=0) &&(k<Nx) && (l>=0) && (l <Ny))
 		{
-			Uint32 pixelvoi = get_pixel(image,l,k);
+			Uint32 pixelvoi = get_pixel(image,k,l);
 			Uint8 r, g, b;
 			SDL_GetRGB(pixelvoi, image->format, &r, &g, &b);
 			if(r > seuil)
 			{
-				put_pixel(image, l, k, pixel);
+				put_pixel(image, k, l, pixel);
 				push(pile,voisins[b]);
 			}
 		}
@@ -253,8 +253,12 @@ SDL_Surface* lineTracePos(struct triple positions[], int Nx, int Ny, int len,flo
 		struct triple pos = positions[i];
 		float i_theta = pos.e2;
 		float i_rho = pos.e1;
-		
+		if(pos.e3<2)
+		{
 
+		}
+		else 
+		{
 		float theta = i_theta *dtheta;
 		float rho = i_rho*drho;
 		float a = cos(theta);
@@ -270,6 +274,9 @@ SDL_Surface* lineTracePos(struct triple positions[], int Nx, int Ny, int len,flo
 		int y2 = (int) y0 - 10000*(-a);
 		
 		drawLine(result,x1,Ny-y1,x2,Ny-y2,pixel);
+		}
+
+		
 	}
 	return result;
 }

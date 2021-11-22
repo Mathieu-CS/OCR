@@ -4,6 +4,8 @@
 
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 
 int Init_SDL();
 Uint32 get_pixel(SDL_Surface *surface, int x, int y);
