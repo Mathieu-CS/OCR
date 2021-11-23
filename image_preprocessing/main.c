@@ -3,8 +3,6 @@
 #include <math.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
 #include "operations.h"
 #include "grayscale.h"
 #include "rotate.h"
@@ -14,9 +12,7 @@
 #include "Sobel.h"
 #include "houghv3.h"
 #include "stack.h"
-#include "houghv4.h"
-#include "image.h"
-#include "int_list.h"
+#include "hough_transform.h"
 
 int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 1 if we use gamma/ something else if we don't
 {
@@ -48,26 +44,21 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
 
         for (int i = 0; i < image->w; i++)
         {
-        M[i] = calloc(image->h, sizeof(double));
+            M[i] = calloc(image->h, sizeof(double));
         } // end of init
         //noise removing 
-        otsu_treshold("gauss.bmp");
+        otsu_treshold("Gauss.bmp");
         Sobel("blackwhite.bmp", M);
-        //augusiin hough
-
-    	
-        int_list listx= *li_create();
-        int_list listy= *li_create();
-        SDL_Surface* myimagesurface = display_bmp("Sobel.bmp");
-        Image myimage_image = SDL_Surface_to_Image(myimage_image);
-        char* verbose_path ="../Images/"
-        **hough_transform(myimage_image,  myimage_image, listx, listy, true, verbose_path)
+        
         for (int k = 0; k < image->w; k++) // free the Matrix
         {
-        free(M[k]);
+            free(M[k]);
         }
 
+
         
+    edge_detection("Sobel.bmp");
+
     }
     else //argv[3]!="gamma"
     {

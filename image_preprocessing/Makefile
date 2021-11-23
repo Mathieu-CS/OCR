@@ -16,7 +16,7 @@ LDLIBS = `pkg-config --libs sdl` -lSDL_image -lSDL_gfx -lm
 
 all: main
 
-main: helpers.o grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o houghv3.o stack.o rotate.o houghv4.o image.o int_list.o geometry.o
+main: grayscale.o Gauss.o operations.o Sobel.o Canny.o noise_cancel.o houghv3.o stack.o rotate.o hough_transform.o
 
 clean:
 	${RM} *.o
