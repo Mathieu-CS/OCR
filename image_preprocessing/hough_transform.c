@@ -99,10 +99,11 @@ void edge_detection(char* path)
         }
     }
 
-    for (int i = 0; i < diagonale; i++)
+    /* for (int i = 0; i < diagonale; i++)
     {
-        printf("value is : %i\n", A[i][0]);
+        //printf("value is : %i\n", A[i][0]);
     }
+    */
     
     // EDGE DETECTION DONE
 
@@ -113,7 +114,7 @@ void edge_detection(char* path)
         for (int j = 0; j < 180; j++)
         {
             //printf("this : %i\n", A[i][j]);
-            if (A[i][j] > 540)
+            if (A[i][j] > 300)
             {
                 int value = A[i][j];
                 value = (255 * value) / 1;
@@ -123,9 +124,9 @@ void edge_detection(char* path)
                 put_pixel(houghSpace, j, i, pixel);
 
                 int indexk = 0;
-                for (int k = -1; k < 2; k++)
+                for (int k = -3; k < 4; k++)
                 {
-                    for (int l = -1; l < 2; l++)
+                    for (int l = -3; l < 4; l++)
                     {
                         int max = 0;
                         
@@ -143,7 +144,8 @@ void edge_detection(char* path)
                         int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
                         //printf("x = %i    y = %i\n", x, y);
                         Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
-                        if (y < 1000 && y >= 0)
+                        int height = image->h;
+                        if (y < height && y >= 0)
                         {
                             put_pixel(image, x, y, pix);
                         }

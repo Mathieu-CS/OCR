@@ -50,6 +50,7 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
         otsu_treshold("Gauss.bmp");
         Sobel("blackwhite.bmp", M);
         
+        
         for (int k = 0; k < image->w; k++) // free the Matrix
         {
             free(M[k]);
@@ -57,7 +58,19 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
 
 
         
-    edge_detection("Sobel.bmp");
+        
+        if(argv[2][0]=='r')
+        {
+            image_rotation("Sobel.bmp",35);
+        }
+        else
+        {
+            image_rotation("Sobel.bmp",0);
+        }
+        otsu_treshold("rotated.bmp");
+      
+        edge_detection("blackwhite.bmp");
+       
 
     }
     else //argv[3]!="gamma"
