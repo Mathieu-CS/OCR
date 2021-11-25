@@ -98,12 +98,6 @@ void edge_detection(char* path)
             }
         }
     }
-
-    /* for (int i = 0; i < diagonale; i++)
-    {
-        //printf("value is : %i\n", A[i][0]);
-    }
-    */
     
     // EDGE DETECTION DONE
 
@@ -114,7 +108,7 @@ void edge_detection(char* path)
         for (int j = 0; j < 180; j++)
         {
             //printf("this : %i\n", A[i][j]);
-            if (A[i][j] > 300)
+            if (A[i][j] > 280)
             {
                 int value = A[i][j];
                 value = (255 * value) / 1;
@@ -124,9 +118,9 @@ void edge_detection(char* path)
                 put_pixel(houghSpace, j, i, pixel);
 
                 int indexk = 0;
-                for (int k = -3; k < 4; k++)
+                for (int k = -1; k < 2; k++)
                 {
-                    for (int l = -3; l < 4; l++)
+                    for (int l = -1; l < 2; l++)
                     {
                         int max = 0;
                         
@@ -139,21 +133,76 @@ void edge_detection(char* path)
                 }
                 
 
-                    for (int x = 0; x < width; x++)
+                    /*for (int x = 0; x < width; x++)
                     {
-                        int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
-                        //printf("x = %i    y = %i\n", x, y);
-                        Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
-                        int height = image->h;
-                        if (y < height && y >= 0)
+                        printf("teta = %i\n", j);
+                        if (j == 0)
                         {
-                            put_pixel(image, x, y, pix);
+                            int y = (int) (indexk - x * pi / 2);
+                            
+                            //printf("x = %i    y = %i\n", x, y);
+                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
+                            if (y < 1000 && y >= 0)
+                            {
+                                put_pixel(image, x, y, pix);
+                            }
+                            else
+                            {
+                                //printf("y over 1000 : %i\n", y);
+                            }
                         }
-                        else
+                        if (j == 90)
                         {
-                            //printf("y over 1000 : %i\n", y);
+                            int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
+                            //printf("x = %i    y = %i\n", x, y);
+                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
+                            if (y < 1000 && y >= 0)
+                            {
+                                put_pixel(image, x, y, pix);
+                            }
+                            else
+                            {
+                                //printf("y over 1000 : %i\n", y);
+                            }
+                        }
+                        
+                    }*/
+                    //if (j >= 80 && j <= 100)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
+                            //printf("x = %i    y = %i\n", x, y);
+                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
+                            if (y < height && y >= 0)
+                            {
+                                put_pixel(image, x, y, pix);
+                            }
+                            else
+                            {
+                                //printf("y over 1000 : %i\n", y);
+                            }
                         }
                     }
+                    if (j == 0)
+                    {
+                        for (int y = 0; y < height; y++)
+                        {
+                            int x = (int) (indexk - y * sin(Convert(j)) / cos(Convert(j)));
+                            //printf("x = %i    y = %i\n", x, y);
+                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
+                            if (x < width && x >= 0)
+                            {
+                                put_pixel(image, x, y, pix);
+                            }
+                            else
+                            {
+                                //printf("y over 1000 : %i\n", y);
+                            }
+                        }
+                    }
+                        
+                        
                 
                 //int x = i * floor(cos(j));
                 //int y = i * floor(sin(j));
