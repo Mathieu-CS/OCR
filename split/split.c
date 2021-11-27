@@ -9,6 +9,102 @@
 #include "SDL/SDL_rotozoom.h"
 #include "operations.h"
 
+// inverts black and white pixels
+void invert (SDL_Surface* image)
+{
+    Uint32 black = SDL_MapRGB(image->format, 0, 0, 0);
+    Uint32 white = SDL_MapRGB(image->format, 255, 255, 255);
+
+    Uint32 pixel;
+    Uint8 r,g,b;
+
+    for (int i = 0; i < image->w; i++)
+    {
+        for (int j = 0; j < image->h; j++)
+        {
+            pixel = get_pixel(image,i,j);
+            SDL_GetRGB(pixel, image->format, &r,&g,&b);
+
+            if (r > 200)
+            {
+                put_pixel(image,i,j,black);
+            }
+            else
+            {
+                put_pixel(image,i,j,white);
+            }      
+        }
+    }
+    
+}
+
+SDL_Surface* move(SDL_Surface* image, int decalagex, int decalagey)
+{
+    Uint32 pixel;
+    Uint8 r1,g1,b1;
+    SDL_Surface* centered = SDL_CreateRGBSurface(0,28,28,32,0,0,0,0);
+
+    for (int i = 0; i < image->w; i++)
+    {
+        for (int j = 0; j < image->h; j++)
+        {
+            pixel = get_pixel(image,i,j);
+            SDL_GetRGB(pixel, image->format, &r1,&g1,&b1);
+
+            if (r1 == 255)
+            {
+                put_pixel(centered, i - decalagex, j - decalagey, pixel);
+            }
+        }
+    }
+
+    return centered;
+}
+
+// centers the number in the subimage
+SDL_Surface* center(SDL_Surface* image)
+{
+    int totx = 0;
+    int toty = 0;
+    int numberpixel = 0;
+    SDL_Surface* BlackSurface = SDL_CreateRGBSurface(0,28,28,32,0,0,0,0);
+    
+    Uint32 pixel;
+    Uint8 r,g,b;
+
+    for (int i = 0; i < image->w; i++)
+    {
+        for (int j = 0; j < image->h; j++)
+        {
+            pixel = get_pixel(image,i,j);
+            SDL_GetRGB(pixel, image->format, &r,&g,&b);
+
+            if (r == 255)
+            {
+                totx += i;
+                toty += j;
+                numberpixel++;   
+            }
+        }
+    }
+
+    if (numberpixel != 0)
+    {
+        float indicatorx = ((float)totx/numberpixel) - 14;
+        float indicatory = ((float)toty/numberpixel) - 14;
+
+        printf("décalage des x : %i\n", (int) ceil(indicatorx));
+        printf("décalage des y : %i\n", (int) ceil(indicatory));
+
+        return move(image, (int) floor(indicatorx), (int) floor(indicatory));
+    }
+    else
+    {
+        return BlackSurface;
+    }
+}
+
+// cleans the borders of the subimages
 void clean(SDL_Surface* image, int width, int height)
 {
     int limitw = width/5;
@@ -91,7 +187,14 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
             double zoomx = ((double) 28) / tosave->w;
             double zoomy = ((double) 28) / tosave->h;
 
-            SDL_SaveBMP(rotozoomSurfaceXY(tosave, 0, zoomx, zoomy, 0), tot);
+            SDL_Surface* totreat = rotozoomSurfaceXY(tosave, 0, zoomx, zoomy, 0);
+            invert(totreat);
+            SDL_Surface* final = center(totreat);
+
+            SDL_SaveBMP(final, tot);
+
+            SDL_FreeSurface(final);
+            SDL_FreeSurface(totreat);
 
             k++;
 
