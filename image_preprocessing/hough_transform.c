@@ -213,7 +213,8 @@ void edge_detection(char* path)
     SDL_SaveBMP(houghSpace, "houghSpace.bmp");
     SDL_SaveBMP(image, "muchachos.bmp");
 
-    
+    SDL_FreeSurface(houghSpace);
+    SDL_FreeSurface(image);
     
     
 }
