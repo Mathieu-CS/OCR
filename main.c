@@ -52,7 +52,7 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
     Gauss("contrast.bmp");
     SDL_Surface* image = display_bmp("Gauss.bmp");
 
-        double **M = calloc(image->w, sizeof(double)); // initialisation of the Matrix
+    double **M = calloc(image->w, sizeof(double)); // initialisation of the Matrix
 
     for (int i = 0; i < image->w; i++)
     {
@@ -66,22 +66,11 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
         free(M[k]);
     }
     free(M);
-
-    int len = (int) strlen(file);
-    char* files = file;
-    if(files[len-6] == '5')
-    {
-        image_rotation("Sobel.bmp",35);
-    }
-    else
-    {   
-        image_rotation("Sobel.bmp",0);
-    }
-
-    otsu_treshold("rotated.bmp");
+    SDL_FreeSurface(image);
+    otsu_treshold("Sobel.bmp");
     edge_detection("blackwhite.bmp");
 
-    int width = 500 ;
+    int width = 500;
     int height = 500;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale("muchachos.bmp", width, height, TRUE, NULL);
     gtk_image_set_from_pixbuf(interface->image, pixbuf);
@@ -93,7 +82,7 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
 
 int main(int argc, char** argv)
 {
-    if (argc != 2 && argc != 4)
+    if (argc != 2 && argc != 3)
     {
         return 1;   
     }
@@ -124,16 +113,6 @@ int main(int argc, char** argv)
         }
         free(M);
 
-                
-                
-        /*if(strcmp(argv[3], "r") == 0)
-        {
-            image_rotation("Sobel.bmp",35);
-        }
-        else
-        {
-            image_rotation("Sobel.bmp",0);
-        }*/
         otsu_treshold("Sobel.bmp");
             
         edge_detection("blackwhite.bmp");
@@ -152,7 +131,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme", TRUE,NULL);
+        //g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme", TRUE,NULL);
 
         GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
         GtkButton* preprocess_button = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton"));

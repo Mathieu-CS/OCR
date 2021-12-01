@@ -107,7 +107,7 @@ void edge_detection(char* path)
 	{
 		for(int j = 0; j < diagonale; j++)
 		{
-			if (A[j][i] > 240)
+			if (A[j][i] > 250)
 			{
 				tetas[i]++;
 			}
@@ -132,6 +132,7 @@ void edge_detection(char* path)
 	}
 	printf("maxVertical = %i\n", maxVertical);
 	printf("maxHorizontal = %i\n", maxHorizontal);
+
 
     image = rotozoomSurface(image, maxVertical - 90, 1.0, 2);
 
@@ -183,13 +184,36 @@ void edge_detection(char* path)
     }
 
     SDL_Surface* houghSpace = SDL_CreateRGBSurface(0, 180, diagonale, 32, 0, 0, 0, 0);
+    int threshold;
 
-    for (int i = 0; i < diagonale; i++)
+    for (int i = 0; i < diagonale - 9; i+=10)
     {
         for (int j = 0; j < 180; j++)
         {
+            int indexk = 0;
+            int max = 0;
+            for (int k = 0; k < 10; k++)
+                {
+                    //for (int l = -2; l < 3; l++)
+                    {
+                        
+                        if (i+k >= 0 && i+k < diagonale && A[i+k][j] > max)
+                        {
+                            
+                            max = A[i+k][j];
+                            indexk = i+k;
+                            
+                        }
+                    }
+                }
             //printf("this : %i\n", A[i][j]);
-            if (A[i][j] > 65)
+            threshold = 200;
+            if (abs(maxVertical - 90) > 4)
+            {
+                threshold = 60;
+            }
+            
+            if (A[indexk][j] > threshold)
             {
                 int value = A[i][j];
                 value = (255 * value) / 1;
@@ -198,27 +222,7 @@ void edge_detection(char* path)
                 Uint32 pixel = SDL_MapRGB(houghSpace->format, (Uint8) value, (Uint8) value, (Uint8) value);
                 put_pixel(houghSpace, j, i, pixel);
 
-                int indexk = 0;
-                for (int k = -2; k < 3; k++)
-                {
-                    for (int l = -2; l < 3; l++)
-                    {
-                        int max = 0;
-                        
-                        if (i+k >= 0 && i+k < diagonale && j+l >= 0 && j+l < 180 && A[i+k][j] > max)
-                        {
-                            if(A[i+k][j] > max)
-                            {
-                                max = A[i+k][j];
-                                indexk = i+k;
-                            }
-                            /*else
-                            {
-                                A[i+k][j] = -1;
-                            }*/
-                        }
-                    }
-                }
+                
                 
 
                     /*for (int x = 0; x < width; x++)
@@ -298,7 +302,7 @@ void edge_detection(char* path)
         }
     }
 
-
+    printf("%i\n", threshold);
     SDL_SaveBMP(houghSpace, "houghSpace.bmp");
     SDL_SaveBMP(image, "muchachos.bmp");
 
