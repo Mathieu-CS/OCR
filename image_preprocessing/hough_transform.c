@@ -58,7 +58,6 @@ void edge_detection(char* path)
             A[i][j] = 0;
         }
     }
-    
 
     for (double x = 10; x < width-10; x++)
     {
@@ -100,6 +99,37 @@ void edge_detection(char* path)
     }
     
     // EDGE DETECTION DONE
+    //
+	int *tetas = calloc(180, sizeof(int));
+	for (int i = 0; i < 180; i++)
+	{
+		for(int j = 0; j < diagonale; j++)
+		{
+			if (A[j][i] > 240)
+			{
+				tetas[i]++;
+			}
+		}
+	}
+
+	int maxVertical = 45;
+	int maxHorizontal = 0;
+
+	for (int i = 0; i < 180; i++)
+	{
+		if (i > 45 && i < 135)
+		{
+			if (tetas[maxVertical] < tetas[i])
+				maxVertical = i;
+		}
+		else
+		{
+			if (tetas[maxHorizontal] < tetas[i])
+				maxHorizontal = i;
+		}
+	}
+	printf("maxVertical = %i\n", maxVertical);
+	printf("maxHorizontal = %i\n", maxHorizontal);
 
     SDL_Surface* houghSpace = SDL_CreateRGBSurface(0, 180, diagonale, 32, 0, 0, 0, 0);
 
@@ -108,7 +138,7 @@ void edge_detection(char* path)
         for (int j = 0; j < 180; j++)
         {
             //printf("this : %i\n", A[i][j]);
-            if (A[i][j] > 280)
+            if (A[i][j] > 240)
             {
                 int value = A[i][j];
                 value = (255 * value) / 1;
@@ -118,16 +148,24 @@ void edge_detection(char* path)
                 put_pixel(houghSpace, j, i, pixel);
 
                 int indexk = 0;
-                for (int k = -1; k < 2; k++)
+                for (int k = -2; k < 3; k++)
                 {
-                    for (int l = -1; l < 2; l++)
+                    //for (int l = -2; l < 3; l++)
                     {
                         int max = 0;
                         
-                        if (i+k >= 0 && i+k < diagonale && j+l >= 0 && j+l < 180 && A[i+k][j+l] > max)
+                        if (i+k >= 0 && i+k < diagonale && A[i+k][j] > max)
                         {
-                            max = A[i+k][j+l];
-                            indexk = i+k;
+                            if(A[i+k][j] > max)
+                            {
+                                max = A[i+k][j];
+                                indexk = i+k;
+                            }
+
+                            else
+                            {
+                                A[i+k][j] = -1;
+                            }
                         }
                     }
                 }
@@ -167,7 +205,7 @@ void edge_detection(char* path)
                         }
                         
                     }*/
-                    if (j >= 80 && j <= 100)
+                    if (j == maxVertical)
                     {
                         for (int x = 0; x < width; x++)
                         {
@@ -184,7 +222,7 @@ void edge_detection(char* path)
                             }
                         }
                     }
-                    if (j == 0)
+                    if (j == maxHorizontal)
                     {
                         for (int y = 0; y < height; y++)
                         {
