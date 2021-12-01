@@ -126,15 +126,15 @@ int main(int argc, char** argv)
 
                 
                 
-        if(strcmp(argv[3], "r") == 0)
+        /*if(strcmp(argv[3], "r") == 0)
         {
             image_rotation("Sobel.bmp",35);
         }
         else
         {
             image_rotation("Sobel.bmp",0);
-        }
-        otsu_treshold("rotated.bmp");
+        }*/
+        otsu_treshold("Sobel.bmp");
             
         edge_detection("blackwhite.bmp");
     }

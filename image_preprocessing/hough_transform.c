@@ -2,6 +2,8 @@
 #include <math.h>
 #include "hough_transform.h"
 #include "operations.h"
+#include "rotate.h"
+#include <SDL/SDL_rotozoom.h>
 #define pi 3.14159265359
 
 double Convert(int degree)
@@ -131,6 +133,55 @@ void edge_detection(char* path)
 	printf("maxVertical = %i\n", maxVertical);
 	printf("maxHorizontal = %i\n", maxHorizontal);
 
+    image = rotozoomSurface(image, maxVertical - 90, 1.0, 2);
+
+    for (int i = 0; i < diagonale; i++)
+    {
+        for (int j = 0; j < 180; j++)
+        {
+            A[i][j] = 0;
+        }
+    }
+
+    for (double x = 10; x < width-10; x++)
+    {
+        for (double y = 10; y < height-10; y++)
+        {
+            Uint32 pixel = get_pixel(image, floor(x), floor(y));
+            Uint8 r,g,b;
+            SDL_GetRGB(pixel, image->format, &r, &g, &b);
+
+            if (r > 200)
+            {
+                for (int teta = 0; teta < 180; teta++)
+                {
+                    double tetaRad = Convert(teta);
+                    //printf("floor(cos) = %i  teta = %i\n", rho, teta);
+                    //if (x * (cos(tetaRad)) - y * (sin(tetaRad) + x * cos(tetaRad) + y * sin(tetaRad)) == 0)
+                    {
+                        
+                        int rho = abs((int) floor(x * cos(tetaRad) + y * sin(tetaRad)));
+                        //printf("rho = %i\n", rho);
+                        A[rho][teta] += 1;
+                        //printf("long thing = %f cos(rho) = %i  cos(tetaRad) = %f  sin(tetaRad) = %f  x = %f  y = %f\n", x * (cos(tetaRad)) - y * (sin(tetaRad)) + rho, rho, cos(tetaRad), sin(tetaRad), x, y);
+                        //printf("hello my bwuda 2\n");
+                            /*for (int i = -1; i < 2; i++)
+                            {
+                                for (int j = -1; j < 2; j++)
+                                {   
+                                    if (rho + i >= 0 && rho + i < diagonale && teta + j >= 0 && teta + j < 180)
+                                    {
+                                        //printf("hello my bwuda 3\n");
+                                        A[rho + i][teta + j] += 1;
+                                    }
+                                }
+                            }*/
+                    }
+                }
+            }
+        }
+    }
+
     SDL_Surface* houghSpace = SDL_CreateRGBSurface(0, 180, diagonale, 32, 0, 0, 0, 0);
 
     for (int i = 0; i < diagonale; i++)
@@ -138,7 +189,7 @@ void edge_detection(char* path)
         for (int j = 0; j < 180; j++)
         {
             //printf("this : %i\n", A[i][j]);
-            if (A[i][j] > 240)
+            if (A[i][j] > 65)
             {
                 int value = A[i][j];
                 value = (255 * value) / 1;
@@ -150,22 +201,21 @@ void edge_detection(char* path)
                 int indexk = 0;
                 for (int k = -2; k < 3; k++)
                 {
-                    //for (int l = -2; l < 3; l++)
+                    for (int l = -2; l < 3; l++)
                     {
                         int max = 0;
                         
-                        if (i+k >= 0 && i+k < diagonale && A[i+k][j] > max)
+                        if (i+k >= 0 && i+k < diagonale && j+l >= 0 && j+l < 180 && A[i+k][j] > max)
                         {
                             if(A[i+k][j] > max)
                             {
                                 max = A[i+k][j];
                                 indexk = i+k;
                             }
-
-                            else
+                            /*else
                             {
                                 A[i+k][j] = -1;
-                            }
+                            }*/
                         }
                     }
                 }
@@ -205,7 +255,7 @@ void edge_detection(char* path)
                         }
                         
                     }*/
-                    if (j == maxVertical)
+                    if (j == 90)
                     {
                         for (int x = 0; x < width; x++)
                         {
@@ -222,7 +272,7 @@ void edge_detection(char* path)
                             }
                         }
                     }
-                    if (j == maxHorizontal)
+                    if (j == 0)
                     {
                         for (int y = 0; y < height; y++)
                         {
@@ -247,6 +297,7 @@ void edge_detection(char* path)
             }
         }
     }
+
 
     SDL_SaveBMP(houghSpace, "houghSpace.bmp");
     SDL_SaveBMP(image, "muchachos.bmp");
