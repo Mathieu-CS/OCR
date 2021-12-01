@@ -52,7 +52,7 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
     Gauss("contrast.bmp");
     SDL_Surface* image = display_bmp("Gauss.bmp");
 
-    double **M = calloc(image->w, sizeof(double)); // initialisation of the Matrix
+        double **M = calloc(image->w, sizeof(double)); // initialisation of the Matrix
 
     for (int i = 0; i < image->w; i++)
     {
