@@ -167,7 +167,7 @@ void edge_detection(char* path)
                         }
                         
                     }*/
-                    //if (j >= 80 && j <= 100)
+                    if (j >= 80 && j <= 100)
                     {
                         for (int x = 0; x < width; x++)
                         {
