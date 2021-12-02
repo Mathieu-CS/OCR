@@ -2,6 +2,7 @@
 #include <math.h>
 #include "hough_transform.h"
 #include "operations.h"
+//#include "rotate.h"
 #define pi 3.14159265359
 
 double Convert(int degree)
@@ -39,6 +40,82 @@ double Convert(int degree)
         y += addy;     
     }
 }*/
+/*
+void automatic_rotate(char*path)
+{
+    SDL_Surface* image = display_bmp(path);
+
+    int width = image->w;
+    int height = image->h;
+    int diagonale = floor(sqrt((double) (width * width + height * height)));
+
+    // there will be 180 teta since we go from 0 include to 180 excluded
+    // there will be diagonale rho
+    int A[diagonale][180];
+    for (int i = 0; i < diagonale; i++)
+    {
+        for (int j = 0; j < 180; j++)
+        {
+            A[i][j] = 0;
+        }
+    }
+    
+
+    for (double x = 10; x < width-10; x++)
+    {
+        for (double y = 10; y < height-10; y++)
+        {
+            Uint32 pixel = get_pixel(image, floor(x), floor(y));
+            Uint8 r,g,b;
+            SDL_GetRGB(pixel, image->format, &r, &g, &b);
+
+            if (r > 250)
+            {
+                for (int teta = 0; teta < 180; teta++)
+                {
+                    double tetaRad = Convert(teta);
+                    {
+                        
+                        int rho = abs((int) floor(x * cos(tetaRad) + y * sin(tetaRad)));
+                        
+                        A[rho][teta] += 1;
+                        
+                      
+                    }
+                }
+            }
+        }
+    }
+    int tetalist[46];
+    for (int i = 0; i < 46; i++)
+    {   tetalist[i] = 0;
+        //printf("tetalist = %lu",tetalist[i]);
+     }
+        
+    for (int j = 0; j < 46; j++)
+    {
+        for (int i = 0; i < diagonale; i++)
+        {
+            tetalist[j]+=A[i][j]/10;
+            //printf("value =%i teta =%i\n",tetalist[j],j);
+        }
+        
+    }
+    int maxtetaidx=0;
+    for(int i = 0; i < 46; i++)
+    {   
+        long temp=tetalist[i];
+        if (temp>tetalist[maxtetaidx])   
+        {
+            //printf("maxteta =%i\n",maxtetaidx);
+            maxtetaidx=i;
+        }
+            
+    }
+    image_rotation(path,maxtetaidx);
+
+}
+*/
 
 void edge_detection(char* path)
 {
@@ -68,7 +145,7 @@ void edge_detection(char* path)
             Uint8 r,g,b;
             SDL_GetRGB(pixel, image->format, &r, &g, &b);
 
-            if (r > 200)
+            if (r > 250)
             {
                 for (int teta = 0; teta < 180; teta++)
                 {
@@ -101,14 +178,27 @@ void edge_detection(char* path)
     
     // EDGE DETECTION DONE
 
+    //starting line Tracing
     SDL_Surface* houghSpace = SDL_CreateRGBSurface(0, 180, diagonale, 32, 0, 0, 0, 0);
 
-    for (int i = 0; i < diagonale; i++)
+    for (int i = 0; i < diagonale-9; i+=10)
     {
         for (int j = 0; j < 180; j++)
         {
+            int max = 0;
+            int indexk = 0;
+                for (int k = 0; k < 10; k++)
+                {
+                    if (i+k >= 0 && i+k < diagonale  && A[i+k][j] > max)
+                    {
+                            max = A[i+k][j];
+                            indexk = i+k;
+                            
+                    }
+                    
+                }
             //printf("this : %i\n", A[i][j]);
-            if (A[i][j] > 280)
+            if (A[indexk][j] > 200)
             {
                 int value = A[i][j];
                 value = (255 * value) / 1;
@@ -117,88 +207,60 @@ void edge_detection(char* path)
                 Uint32 pixel = SDL_MapRGB(houghSpace->format, (Uint8) value, (Uint8) value, (Uint8) value);
                 put_pixel(houghSpace, j, i, pixel);
 
-                int indexk = 0;
-                for (int k = -1; k < 2; k++)
-                {
-                    for (int l = -1; l < 2; l++)
-                    {
-                        int max = 0;
-                        
-                        if (i+k >= 0 && i+k < diagonale && j+l >= 0 && j+l < 180 && A[i+k][j+l] > max)
-                        {
-                            max = A[i+k][j+l];
-                            indexk = i+k;
-                        }
-                    }
-                }
-                
-
-                    /*for (int x = 0; x < width; x++)
-                    {
-                        printf("teta = %i\n", j);
-                        if (j == 0)
-                        {
-                            int y = (int) (indexk - x * pi / 2);
-                            
-                            //printf("x = %i    y = %i\n", x, y);
-                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
-                            if (y < 1000 && y >= 0)
-                            {
-                                put_pixel(image, x, y, pix);
-                            }
-                            else
-                            {
-                                //printf("y over 1000 : %i\n", y);
-                            }
-                        }
-                        if (j == 90)
-                        {
-                            int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
-                            //printf("x = %i    y = %i\n", x, y);
-                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
-                            if (y < 1000 && y >= 0)
-                            {
-                                put_pixel(image, x, y, pix);
-                            }
-                            else
-                            {
-                                //printf("y over 1000 : %i\n", y);
-                            }
-                        }
-                        
-                    }*/
-                    //if (j >= 80 && j <= 100)
+                    if (j == 90)
                     {
                         for (int x = 0; x < width; x++)
+                     {
+                         int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
+
+                        
+                        //printf("x = %i    y = %i\n", x, y);
+                         Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
+                        if (y < height && y >= 0)
                         {
-                            int y = (int) (indexk - x * cos(Convert(j)) / sin(Convert(j)));
-                            //printf("x = %i    y = %i\n", x, y);
-                            Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
-                            if (y < height && y >= 0)
+                            Uint32 inter_pixel = get_pixel(image, floor(x), floor(y));
+                            Uint8 r,g,b;
+                            SDL_GetRGB(inter_pixel, image->format, &r, &g, &b);
+                            if (r==178)
                             {
-                                put_pixel(image, x, y, pix);
+                                put_pixel(image, x, y, SDL_MapRGB(image->format, 0, 255, 0));
                             }
                             else
                             {
-                                //printf("y over 1000 : %i\n", y);
+                                put_pixel(image, x, y, pix);
                             }
+                                    
                         }
+                            
+                     }
                     }
+                    
                     if (j == 0)
                     {
                         for (int y = 0; y < height; y++)
                         {
+                        
                             int x = (int) (indexk - y * sin(Convert(j)) / cos(Convert(j)));
+
+                            
                             //printf("x = %i    y = %i\n", x, y);
                             Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
                             if (x < width && x >= 0)
                             {
-                                put_pixel(image, x, y, pix);
+                                Uint32 inter_pixel = get_pixel(image, floor(x), floor(y));
+                                Uint8 r,g,b;
+                                SDL_GetRGB(inter_pixel, image->format, &r, &g, &b);
+                                if (r==178)
+                                {
+                                    put_pixel(image, x, y, SDL_MapRGB(image->format, 0, 255, 0));
+                                }
+                                else
+                                {
+                                    put_pixel(image, x, y, pix);
+                                }
+                                    
                             }
-                            else
-                            {
-                                //printf("y over 1000 : %i\n", y);
-                            }
+                           
                         }
                     }
                         
@@ -209,12 +271,9 @@ void edge_detection(char* path)
             }
         }
     }
-
-    SDL_SaveBMP(houghSpace, "houghSpace.bmp");
-    SDL_SaveBMP(image, "muchachos.bmp");
-
-    SDL_FreeSurface(houghSpace);
-    SDL_FreeSurface(image);
+    //Line Trace done
     
+    SDL_SaveBMP(houghSpace, "houghSpace.bmp");
+    SDL_SaveBMP(image, "edgedetecion.bmp");
     
 }
