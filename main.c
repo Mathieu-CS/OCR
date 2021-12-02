@@ -112,11 +112,13 @@ int main(int argc, char** argv)
             free(M[k]);
         }
         free(M);
+        SDL_FreeSurface(image);
 
         otsu_treshold("Sobel.bmp");
             
         edge_detection("blackwhite.bmp");
     }
+    
     else if (strcmp(argv[1], "gtk") == 0)
     {
         gtk_init(&argc, &argv);

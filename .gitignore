@@ -4,6 +4,7 @@
 *.out
 grid_00.result
 main
+*.vscode
 
 
 *~
