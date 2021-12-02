@@ -208,16 +208,79 @@ SDL_Surface* center(SDL_Surface* image)
     }
 }
 
+int checkx(SDL_Surface* image, int x, int y)
+{
+    Uint32 pixel;
+    Uint8 r, g, b;
+    for (int i = x; i < image->w; i++)
+    {
+        pixel = get_pixel(image, i, y);
+        SDL_GetRGB(pixel, image->format, &r,&g,&b);
+        if (r == 0 && g == 0 && b == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int checky(SDL_Surface* image, int x, int y)
+{
+    Uint32 pixel;
+    Uint8 r, g, b;
+    for (int i = y; i < image->h; i++)
+    {
+        pixel = get_pixel(image, x, i);
+        SDL_GetRGB(pixel, image->format, &r,&g,&b);
+        if (r == 0 && g == 0 && b == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void __clean(SDL_Surface* image)
+{
+    int x = 0;
+    int y = 0;
+    Uint32 white = SDL_MapRGB(image->format, 255, 255, 255);
+
+    while (checkx(image, x, y) == 1 && checky(image, x, y) == 1)
+    {
+        x++;
+        y++;
+    }
+    
+    for (int i = 0; i < x; i++)
+    {
+        for (int j = 0; j < image->h; j++)
+        {
+            put_pixel(image, x, y, white);
+        }
+    }
+    
+    for (int i = 0; i < image->w; i++)
+    {
+        for (int j = 0; j < y; j++)
+        {
+            put_pixel(image, x, y, white);
+        }
+    }
+    
+}
+
 // cleans the borders of the subimages
 void clean(SDL_Surface* image)
 {
+    //__clean(image);
     int limitw = image->w/7;
     int limith = image->h/7;
     Uint32 white = SDL_MapRGB(image->format, 255, 255, 255);
 
     // up clean
 
-    for (int i = 0; i < limith; i++)
+    for (int i = 0; i < (limith * 7)/5; i++)
     {
         for (int j = 0; j < image->w; j++)
         {
@@ -239,7 +302,7 @@ void clean(SDL_Surface* image)
 
     for (int i = 0; i < image->h; i++)
     {
-        for (int j = 0; j < limitw; j++)
+        for (int j = 0; j < (limitw * 7)/5; j++)
         {
             put_pixel(image, j, i, white);
         }
@@ -289,22 +352,21 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
             snprintf(tot, 15, "%i.bmp", k);
 
             SDL_BlitSurface(image, splitrect, tosave, NULL);
-            //clean(tosave);
+            clean(tosave);
             double zoomx = ((double) 28) / tosave->w;
             double zoomy = ((double) 28) / tosave->h;
 
             SDL_Surface* totreat = rotozoomSurfaceXY(tosave, 0, zoomx, zoomy, 0);
             
-            SDL_SaveBMP(totreat, tot);
-
+            //SDL_SaveBMP(totreat, tot);
             
-            /*invert(totreat);
+            invert(totreat);
             SDL_Surface* final = center(totreat);
 
             SDL_SaveBMP(final, tot);
 
             SDL_FreeSurface(final);
-            SDL_FreeSurface(totreat);*/
+            SDL_FreeSurface(totreat);
 
             k++;
 
