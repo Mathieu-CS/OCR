@@ -8,6 +8,6 @@
 #include "reconstruction.h"
 #include "SDL/SDL_rotozoom.h"
 
-void reconstruction(char* infos, char* solved, SDL_Surface* baseimage);
+void reconstruction(char* solved);
 
 #endif
