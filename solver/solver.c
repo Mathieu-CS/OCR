@@ -176,7 +176,7 @@ char *sudokuStr(int grid[N][N])
 	return sudoku;
 }
 
-int main(int argc, char *argv[])
+/*int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
@@ -251,4 +251,4 @@ int main(int argc, char *argv[])
     fputs("\n", fp);
     fclose(fp);
     return 0;
-}
+}*/

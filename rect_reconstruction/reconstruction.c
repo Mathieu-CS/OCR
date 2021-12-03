@@ -3,7 +3,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "reconstruction.h"
-#include "operations.h"
+#include "../image_preprocessing/operations.h"
 #include "SDL/SDL_rotozoom.h"
 
 void drawoutlines(SDL_Surface* image)
@@ -124,46 +124,12 @@ SDL_Surface* getsurfacefromint(int x)
     return mysurface;
 }
 
-void reconstruction(char* infos, char* solved, SDL_Surface* baseimage)
+void reconstruction(char* solved)
 {
     // method to read a file found at stackoverflow.com/questions/3501338/c-read-file-line-by-line
     // potential problem as the function getline is specific to GNU environement
 
-    // step 1 : extract infos from infos file
-
-    FILE *fp = fopen(infos, "r");
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
-
-    if(fp == NULL)
-    {
-        perror("Error while opening the file infos.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // format of the file infos are :
-    // the x coordinate of the top left pixel of the sudoku grid
-    // the y coordinate of the top left pixel of the sudoku grid
-    // the width of the sudoku grid
-    // the height of the sudoku grid
-
-    int infoarray[4];
-    int index = 0;
-
-    while((read = getline(&line, &len, fp)) != -1)
-    {
-        infoarray[index] = atoi(line);
-        index++;   
-    }
-    
-    fclose(fp);
-    if (line)
-    {
-        free(line);
-    }
-
-    // end of step 1
+    SDL_Surface* baseimage = SDL_CreateRGBSurface(0, 1000, 1000, 32, 0, 0, 0, 0);
 
     // step 2 : extract infos from solved file :
 
@@ -202,10 +168,10 @@ void reconstruction(char* infos, char* solved, SDL_Surface* baseimage)
 
     // step 3 : reconstruction of the grid
 
-    int x = infoarray[0];
-    int y = infoarray[1];
-    int width = infoarray[2];
-    int height = infoarray[3];
+    int x = 0;
+    int y = 0;
+    int width = 999;
+    int height = 999;
 
     int stepw = width/9;
     int steph = height/9;
