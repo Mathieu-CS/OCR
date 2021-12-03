@@ -59,7 +59,7 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
         M[i] = calloc(image->h, sizeof(double));
     } // end of init
     //noise removing 
-    otsu_treshold("Gauss.bmp");
+    otsu_treshold("Gauss.bmp", "blackwhite.bmp");
     Sobel("blackwhite.bmp", M);
     for (int k = 0; k < image->w; k++) // free the Matrix
     {
@@ -67,8 +67,8 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
     }
     free(M);
     SDL_FreeSurface(image);
-    otsu_treshold("Sobel.bmp");
-    edge_detection("blackwhite.bmp");
+    otsu_treshold("Sobel.bmp", "blackwhite2.bmp");
+    edge_detection("blackwhite2.bmp");
 
     int width = 500;
     int height = 500;
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
             M[i] = calloc(image->h, sizeof(double));
         } // end of init
         //noise removing 
-        otsu_treshold("Gauss.bmp");
+        otsu_treshold("Gauss.bmp", "blackwhite.bmp");
         Sobel("blackwhite.bmp", M);
                 
                 
@@ -114,9 +114,9 @@ int main(int argc, char** argv)
         free(M);
         SDL_FreeSurface(image);
 
-        otsu_treshold("Sobel.bmp");
+        otsu_treshold("Sobel.bmp", "blackwhite2.bmp");
             
-        edge_detection("blackwhite.bmp");
+        edge_detection("blackwhite2.bmp");
     }
     
     else if (strcmp(argv[1], "gtk") == 0)

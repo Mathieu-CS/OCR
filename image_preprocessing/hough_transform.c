@@ -259,6 +259,7 @@ void edge_detection(char* path)
                         }
                         
                     }*/
+
                     if (j == 90)
                     {
                         for (int x = 0; x < width; x++)
@@ -268,11 +269,13 @@ void edge_detection(char* path)
                             Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
                             if (y < height && y >= 0)
                             {
-                                put_pixel(image, x, y, pix);
-                            }
-                            else
-                            {
-                                //printf("y over 1000 : %i\n", y);
+                                Uint32 inter_pixel = get_pixel(image, floor(x), floor(y));
+                                Uint8 r, g, b;
+                                SDL_GetRGB(inter_pixel, image->format, &r, &g, &b);
+                                if (r != 178)
+                                    put_pixel(image, x, y, pix);
+                                else
+                                    put_pixel(image, x, y, SDL_MapRGB(image->format, 0, 255, 0));
                             }
                         }
                     }
@@ -285,11 +288,13 @@ void edge_detection(char* path)
                             Uint32 pix = SDL_MapRGB(image->format, 178, 34, 34);
                             if (x < width && x >= 0)
                             {
-                                put_pixel(image, x, y, pix);
-                            }
-                            else
-                            {
-                                //printf("y over 1000 : %i\n", y);
+                                Uint32 inter_pixel = get_pixel(image, floor(x), floor(y));
+                                Uint8 r, g, b;
+                                SDL_GetRGB(inter_pixel, image->format, &r, &g, &b);
+                                if (r != 178)
+                                    put_pixel(image, x, y, pix);
+                                else
+                                    put_pixel(image, x, y, SDL_MapRGB(image->format, 0, 255, 0));
                             }
                         }
                     }
@@ -301,8 +306,7 @@ void edge_detection(char* path)
             }
         }
     }
-
-    printf("%i\n", threshold);
+;
     SDL_SaveBMP(houghSpace, "houghSpace.bmp");
     SDL_SaveBMP(image, "muchachos.bmp");
 
