@@ -284,7 +284,7 @@ Uint8 get_threshold(unsigned long *histogram, int total)
     //printf("threshold = %u\n", threshold);
     return threshold;
 }
-void otsu_treshold(char* path)
+void otsu_treshold(char* path, char* destination)
 {
     SDL_Surface* image_surface;
     image_surface = display_bmp(path);
@@ -314,7 +314,7 @@ void otsu_treshold(char* path)
         }
     }
     free(hist);
-    SDL_SaveBMP (image_surface ,"blackwhite.bmp");
+    SDL_SaveBMP (image_surface ,destination);
     SDL_FreeSurface(image_surface);
     
 }

@@ -343,9 +343,9 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
     int i = x0;
     int j = y0;
 
-    while (i < x0 + width)
+    while (j < y0 + length)
     {
-        while (j < y0 + length)
+        while (i < x0 + width)
         {
             splitrect->x = i;
             splitrect->y = j;
@@ -369,11 +369,10 @@ void split(SDL_Surface* image, int x0, int y0, int width, int length)
             SDL_FreeSurface(totreat);
 
             k++;
-
-            j = j + pathy;
+            i = i + pathx;
         }
-        j = y0;
-        i = i + pathx;
+        i = x0;
+        j = j + pathy;
     }
     
     free(splitrect);
@@ -401,7 +400,7 @@ int main()
     // argv[2] = contrast.bmp
 
     SDL_Surface* hough = display_bmp("../image_preprocessing/edgedetecion.bmp");
-    SDL_Surface* contrast = display_bmp("../image_preprocessing/contrast.bmp");
+    SDL_Surface* contrast = display_bmp("../image_preprocessing/blackwhite.bmp");
 
     int* coor = detect_rect(hough);
 

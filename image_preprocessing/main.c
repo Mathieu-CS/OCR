@@ -47,7 +47,7 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
             M[i] = calloc(image->h, sizeof(double));
         } // end of init
         //noise removing 
-        otsu_treshold("Gauss.bmp");
+        otsu_treshold("Gauss.bmp", "blackwhite.bmp");
         Sobel("blackwhite.bmp", M);
         
         
@@ -67,18 +67,9 @@ int main(int argc,char **argv)//argv[1]=path to image; argv[2]=degree; argv[3]= 
         {
             image_rotation("Sobel.bmp",0);
         }
-        otsu_treshold("rotated.bmp");
+        otsu_treshold("rotated.bmp", "blackwhite2.bmp");
       
-        edge_detection("blackwhite.bmp");
-       
-
-    }
-    else //argv[3]!="gamma"
-    {
-        otsu_treshold("Gauss.bmp");
-       // Sobel("blackwhite.bmp", M);
-        HTLineDetection("Sobel.bmp");
-        
+        edge_detection("blackwhite2.bmp");
     }
      
     // line detection
