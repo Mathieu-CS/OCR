@@ -5,7 +5,7 @@
 
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
-#include "pixel_operations.h"
+#include "../image_preprocessing/operations.h"
 #include "sdltoarray.h"
 
 void init_sdl()
@@ -58,6 +58,41 @@ void toArray(char *imageLoc, double imageToArray[])
   SDL_FreeSurface(image_surface);
   
 }
+
+int isDigits2(char *imageLoc)
+{
+     //printf("%s\n", imageLoc);
+  SDL_Surface* image_surface = load_image(imageLoc);
+  //int imageToArray[28*28];
+
+  //int max = 784;
+  int p = 0;
+  
+  int width = image_surface->w;
+  int height = image_surface->h;
+  for(int y = 0; y < height; y++)
+    {
+      for(int x = 0; x < width; x++)
+	{
+	  Uint32 pixel = get_pixel(image_surface, x, y);
+	  Uint8 r, g, b;
+	  SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
+
+	  if (r != g || g != b)
+	    errx(3, "problem with the image");
+
+	  if (r > 100)
+              p++;
+	}
+    }
+  SDL_FreeSurface(image_surface);
+
+  if (p < 10)
+      return 0;
+  else
+      return 1;
+}
+
 
 void print_matrix(char s[], double m[], size_t rows, size_t cols)
 {

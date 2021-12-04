@@ -51,14 +51,18 @@ int neuralNetwork(char imgStr[])
   if (load == 1) // load weights and biases from file
     {
       FILE* fptr;
-      fptr = fopen("save.txt", "r");
+      fptr = fopen("ai/save.txt", "r");
       
       int j = 0;
       int k = 0;
       double nb;
       while (j < numHiddenNodes)
 	{
-	  int a = fscanf(fptr, "%lf", &nb);
+
+            int a = fscanf(fptr, "%lf", &nb);
+            printf("ici la 2\n");
+          if (a != EOF)
+              printf("A sup a 0\n");
 	  if (k == numInputs)
 	    {
 	      k = 0;
@@ -73,6 +77,8 @@ int neuralNetwork(char imgStr[])
 	{
 	  hiddenLayerBias[j] = nb;
 	  int a = fscanf(fptr, "%lf", &nb);
+          if (a != EOF)
+              printf("A sup a 0\n");
 	  j++;
 	}
       
@@ -89,6 +95,8 @@ int neuralNetwork(char imgStr[])
 	  if (j != numOutputs-1 || k != numHiddenNodes-1)
 	    {
 	      int a = fscanf(fptr, "%lf", &nb);
+              if (a != EOF)
+                  printf("A sup a 0\n");
 	    }
 	  k++;
 	}
@@ -98,6 +106,8 @@ int neuralNetwork(char imgStr[])
 	{
 	  outputLayerBias[j] = nb;
 	  int a = fscanf(fptr, "%lf", &nb);
+          if (a != EOF)
+              printf("A sup a 0\n");
 	  j++;
 	}
       

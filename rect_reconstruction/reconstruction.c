@@ -3,7 +3,7 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "reconstruction.h"
-#include "operations.h"
+#include "../image_preprocessing/operations.h"
 #include "SDL/SDL_rotozoom.h"
 
 void drawoutlines(SDL_Surface* image)
@@ -88,35 +88,35 @@ SDL_Surface* getsurfacefromint(int x)
     switch (x)
     {
     case 1:
-        mysurface = display_bmp("../rec_images/1.bmp");
+        mysurface = display_bmp("rec_images/1.bmp");
         break;
     case 2:
-        mysurface = display_bmp("../rec_images/2.bmp");
+        mysurface = display_bmp("rec_images/2.bmp");
         break;
     case 3:
-        mysurface = display_bmp("../rec_images/3.bmp");
+        mysurface = display_bmp("rec_images/3.bmp");
         break;
     case 4:
-        mysurface = display_bmp("../rec_images/4.bmp");
+        mysurface = display_bmp("rec_images/4.bmp");
         break;
     case 5:
-        mysurface = display_bmp("../rec_images/5.bmp");
+        mysurface = display_bmp("rec_images/5.bmp");
         break;
     case 6:
-        mysurface = display_bmp("../rec_images/6.bmp");
+        mysurface = display_bmp("rec_images/6.bmp");
         break;
     case 7:
-        mysurface = display_bmp("../rec_images/7.bmp");
+        mysurface = display_bmp("rec_images/7.bmp");
         break;
     case 8:
-        mysurface = display_bmp("../rec_images/8.bmp");
+        mysurface = display_bmp("rec_images/8.bmp");
         break;
     case 9:
-        mysurface = display_bmp("../rec_images/9.bmp");
+        mysurface = display_bmp("rec_images/9.bmp");
         break;
     
     default:
-        mysurface = display_bmp("../rec_images/1.bmp");
+        mysurface = display_bmp("rec_images/1.bmp");
         break;
     }
 
@@ -124,46 +124,56 @@ SDL_Surface* getsurfacefromint(int x)
     return mysurface;
 }
 
-void reconstruction(char* infos, char* solved, SDL_Surface* baseimage)
+SDL_Surface* getsurfacefromintred(int x)
+{
+    SDL_Surface* mysurface;
+
+    switch (x)
+    {
+    case 1:
+        mysurface = display_bmp("rec_images/11.bmp");
+        break;
+    case 2:
+        mysurface = display_bmp("rec_images/12.bmp");
+        break;
+    case 3:
+        mysurface = display_bmp("rec_images/13.bmp");
+        break;
+    case 4:
+        mysurface = display_bmp("rec_images/14.bmp");
+        break;
+    case 5:
+        mysurface = display_bmp("rec_images/15.bmp");
+        break;
+    case 6:
+        mysurface = display_bmp("rec_images/16.bmp");
+        break;
+    case 7:
+        mysurface = display_bmp("rec_images/17.bmp");
+        break;
+    case 8:
+        mysurface = display_bmp("rec_images/18.bmp");
+        break;
+    case 9:
+        mysurface = display_bmp("rec_images/19.bmp");
+        break;
+    
+    default:
+        mysurface = display_bmp("rec_images/11.bmp");
+        break;
+    }
+
+    drawoutlines(mysurface);
+    return mysurface;
+}
+
+
+void reconstruction(char* solved, char* based)
 {
     // method to read a file found at stackoverflow.com/questions/3501338/c-read-file-line-by-line
     // potential problem as the function getline is specific to GNU environement
 
-    // step 1 : extract infos from infos file
-
-    FILE *fp = fopen(infos, "r");
-    char *line = NULL;
-    size_t len = 0;
-    ssize_t read;
-
-    if(fp == NULL)
-    {
-        perror("Error while opening the file infos.\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // format of the file infos are :
-    // the x coordinate of the top left pixel of the sudoku grid
-    // the y coordinate of the top left pixel of the sudoku grid
-    // the width of the sudoku grid
-    // the height of the sudoku grid
-
-    int infoarray[4];
-    int index = 0;
-
-    while((read = getline(&line, &len, fp)) != -1)
-    {
-        infoarray[index] = atoi(line);
-        index++;   
-    }
-    
-    fclose(fp);
-    if (line)
-    {
-        free(line);
-    }
-
-    // end of step 1
+    SDL_Surface* baseimage = SDL_CreateRGBSurface(0, 1000, 1000, 32, 0, 0, 0, 0);
 
     // step 2 : extract infos from solved file :
 
@@ -200,12 +210,45 @@ void reconstruction(char* infos, char* solved, SDL_Surface* baseimage)
 
     // end of step 2
 
+    // step 2.5 extract infos from
+
+    int basedsolvedgrid[9][9];
+    
+    FILE *fg = fopen(based, "r");
+
+    if (fg == NULL)
+    {
+        perror("Error while opening the solved grid file.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    ix = 0;
+    iy = 0;
+    char cg;
+
+    while ((cg = fgetc(fg)) != EOF)
+    {
+        if (((int) cg >= 48 && (int) cg <= 57) || (int) cg == 46)
+        {
+            basedsolvedgrid[ix][iy] = ((int) cg) - 48;
+            ix++;
+
+            if (ix == 9)
+            {
+                iy++;
+                ix = 0;
+            }
+        }
+    }
+
+    fclose(fg);
+
     // step 3 : reconstruction of the grid
 
-    int x = infoarray[0];
-    int y = infoarray[1];
-    int width = infoarray[2];
-    int height = infoarray[3];
+    int x = 0;
+    int y = 0;
+    int width = 999;
+    int height = 999;
 
     int stepw = width/9;
     int steph = height/9;
@@ -218,8 +261,17 @@ void reconstruction(char* infos, char* solved, SDL_Surface* baseimage)
     {
         for (int i = x; i < width; i += stepw)
         {
+            SDL_Surface* topaste;
             number = solvedgrid[a][b];
-            SDL_Surface* topaste = getsurfacefromint(number);
+
+            if (basedsolvedgrid[a][b] == -2)
+            {
+                topaste = getsurfacefromintred(number); // new
+            }
+            else
+            {
+                topaste = getsurfacefromint(number); // already on the image
+            }
             pastesurface(baseimage, topaste, i, j, format);
             SDL_FreeSurface(topaste);
             a++;
