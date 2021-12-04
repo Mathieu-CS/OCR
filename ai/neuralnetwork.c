@@ -51,7 +51,7 @@ int neuralNetwork(char imgStr[])
   if (load == 1) // load weights and biases from file
     {
       FILE* fptr;
-      fptr = fopen("save.txt", "r");
+      fptr = fopen("ai/save.txt", "r");
       
       int j = 0;
       int k = 0;

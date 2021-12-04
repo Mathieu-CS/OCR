@@ -14,7 +14,7 @@ LDFLAGS = -fsanitize=address -ldl
 # libs and path for linker
 LDLIBS = `pkg-config --libs sdl gtk+-3.0` -lSDL_image -lSDL_gfx -lm
 
-SRC = $(wildcard image_preprocessing/*.c) $(wildcard split/*.o) $(wildcard rect_reconstruction/*.c)  ai/sdltoarray.o ai/neuralnetwork.o main.o
+SRC = $(wildcard image_preprocessing/*.c) $(wildcard split/*.o) $(wildcard rect_reconstruction/*.c) ai/sdltoarray.c ai/neuralnetwork.c  solver/solver.o main.o
 OBJ = $(SRC:.c=.o)
 DEP = $(SRC:.c=.d)
 
@@ -30,3 +30,13 @@ clean:
 	${RM} main
 	${RM} split/*.o
 	${RM} split/*.d
+	${RM} image_preprocessing/*.o
+	${RM} image_preprocessing/*.d
+	${RM} rect_reconstruction/*.o
+	${RM} rect_reconstruction/*.d
+	${RM} ai/*.o
+	${RM} ai/*.d
+	${RM} solver/*.o
+	${RM} solver/*.d
+	${RM} *.result
+	${RM} grid_00

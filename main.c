@@ -1,8 +1,11 @@
 #include "ai/neuralnetwork.h"
+#include "solver/solver.h"
 #include <err.h>
 #include <stdio.h>
 #include <math.h>
 
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "image_preprocessing/operations.h"
@@ -19,7 +22,6 @@
 #include "string.h"
 
 //#include "ai/sdltoarray.h"
-
 
 
 // rect_reconstruction
@@ -40,6 +42,10 @@
 // -------------------------------------------------------
 
 // returns the width of the square if square else 0;
+
+
+
+
 
 int square(int x1, int y1, int x2, int y2)
 {
@@ -430,6 +436,7 @@ typedef struct Interface
     GtkButton* split_button;
     GtkButton* detect_square;
     GtkButton* feedAI_button;
+    GtkButton* solve_button;
     GtkImage* image;
 }Interface;
 
@@ -519,8 +526,7 @@ void on_reconstruction(GtkButton* button, gpointer user_data)
 {
     gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
     Interface* interface = user_data;
-    printf("ICI\n");
-    reconstruction("grid_00.result");
+    reconstruction("grid_00.result", "grid_00");
     printf("HERE\n");
     int width = 707;
     int height = 707;
@@ -536,7 +542,7 @@ void on_feedAI(GtkButton* button)
     fptr2 = fopen("grid_00", "w");
     for (int i = 0; i < 81; i++)
     {
-        printf("%i\n" , i);
+        printf("%i\n", i);
         char *a;
         if (i < 10)
             a = malloc(7*sizeof(char));
@@ -566,6 +572,75 @@ void on_feedAI(GtkButton* button)
     }
     fclose(fptr2);
 }
+
+void on_solve(GtkButton* button, gpointer user_data)
+{
+    char* param = "grid_00";
+    char filename[15];
+    
+    FILE *fo;
+    fo = fopen(param, "r");
+    char input[82];
+    input[0] = '\0';
+    for (int i = 0; i < 27; i++)
+    {
+        printf("%i\n", i);
+        char temp[4];
+        int a = fscanf(fo, "%s", temp);
+        strcat(input, temp);
+    }
+    printf("%s\n", input);
+    input[81] = '\0';
+
+    fclose(fo);
+
+    int grid[N][N];
+    
+    int count = 0;
+    int line = 0;
+    for (size_t i = 0; i < 9;)
+    {
+        if (input[count] != '\n' || line % 3 == 0)
+        {
+            for (size_t j = 0; j < 9; count++)
+            { 
+                if (input[count] != ' ' && input[count] != '\n')
+                {
+                    if (input[count] == '.')
+                    {
+                        grid[i][j] = 0;
+                    }
+                    else
+                    {
+                        char c = input[count];
+                        grid[i][j] = c - '0';
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
+        else
+        {
+            line++;
+        }
+    }
+
+    
+    // 0 means unassigned cells
+    /*if (solveSuduko(grid, 0, 0)==1)
+        print(grid);
+    else
+    printf("No solution exists");*/
+
+    solveSuduko(grid, 0, 0);
+    FILE *fp;
+    sprintf(filename, "%s.result", param);
+    fp = fopen(filename, "w");
+    fprintf(fp, "%s", sudokuStr(grid));
+    fclose(fp);
+}
+
 
 
 int main(int argc, char** argv)
@@ -621,13 +696,14 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        //g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme", TRUE,NULL);
+        g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme", TRUE,NULL);
 
         GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
         GtkButton* preprocess_button = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton"));
         GtkButton* split_button = GTK_BUTTON(gtk_builder_get_object(builder, "split_button"));
         GtkButton* detect_button = GTK_BUTTON(gtk_builder_get_object(builder, "detect_square"));
         GtkButton* feedAI = GTK_BUTTON(gtk_builder_get_object(builder, "feedAI"));
+        GtkButton* solve_button = GTK_BUTTON(gtk_builder_get_object(builder, "solve_button"));
         GtkFileChooserButton* load_button = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "LoadButton"));
         GtkImage* image = GTK_IMAGE(gtk_builder_get_object(builder, "image"));
 
@@ -638,6 +714,7 @@ int main(int argc, char** argv)
             .detect_square = detect_button,
             .split_button = split_button,
             .feedAI_button = feedAI,
+            .solve_button = solve_button,
             .load_button = load_button,
             .image = image,
         };
@@ -649,6 +726,7 @@ int main(int argc, char** argv)
         g_signal_connect(detect_button, "clicked", G_CALLBACK(on_detect_square), &interface);
         g_signal_connect(split_button, "clicked", G_CALLBACK(on_reconstruction), &interface);
         g_signal_connect(feedAI, "clicked", G_CALLBACK(on_feedAI), NULL);
+        g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
 
         gtk_widget_show(GTK_WIDGET(window));
 
