@@ -124,7 +124,51 @@ SDL_Surface* getsurfacefromint(int x)
     return mysurface;
 }
 
-void reconstruction(char* solved)
+SDL_Surface* getsurfacefromintred(int x)
+{
+    SDL_Surface* mysurface;
+
+    switch (x)
+    {
+    case 1:
+        mysurface = display_bmp("../rec_images/11.bmp");
+        break;
+    case 2:
+        mysurface = display_bmp("../rec_images/12.bmp");
+        break;
+    case 3:
+        mysurface = display_bmp("../rec_images/13.bmp");
+        break;
+    case 4:
+        mysurface = display_bmp("../rec_images/14.bmp");
+        break;
+    case 5:
+        mysurface = display_bmp("../rec_images/15.bmp");
+        break;
+    case 6:
+        mysurface = display_bmp("../rec_images/16.bmp");
+        break;
+    case 7:
+        mysurface = display_bmp("../rec_images/17.bmp");
+        break;
+    case 8:
+        mysurface = display_bmp("../rec_images/18.bmp");
+        break;
+    case 9:
+        mysurface = display_bmp("../rec_images/19.bmp");
+        break;
+    
+    default:
+        mysurface = display_bmp("../rec_images/11.bmp");
+        break;
+    }
+
+    drawoutlines(mysurface);
+    return mysurface;
+}
+
+
+void reconstruction(char* solved, char* based)
 {
     // method to read a file found at stackoverflow.com/questions/3501338/c-read-file-line-by-line
     // potential problem as the function getline is specific to GNU environement
@@ -166,6 +210,39 @@ void reconstruction(char* solved)
 
     // end of step 2
 
+    // step 2.5 extract infos from
+
+    int basedsolvedgrid[9][9];
+    
+    FILE *fg = fopen(based, "r");
+
+    if (fg == NULL)
+    {
+        perror("Error while opening the solved grid file.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    ix = 0;
+    iy = 0;
+    char cg;
+
+    while ((cg = fgetc(fg)) != EOF)
+    {
+        if (((int) cg >= 48 && (int) cg <= 57) || (int) cg == 46)
+        {
+            basedsolvedgrid[ix][iy] = ((int) cg) - 48;
+            ix++;
+
+            if (ix == 9)
+            {
+                iy++;
+                ix = 0;
+            }
+        }
+    }
+
+    fclose(fg);
+
     // step 3 : reconstruction of the grid
 
     int x = 0;
@@ -184,8 +261,17 @@ void reconstruction(char* solved)
     {
         for (int i = x; i < width; i += stepw)
         {
+            SDL_Surface* topaste;
             number = solvedgrid[a][b];
-            SDL_Surface* topaste = getsurfacefromint(number);
+
+            if (basedsolvedgrid[a][b] == -2)
+            {
+                topaste = getsurfacefromintred(number); // new
+            }
+            else
+            {
+                topaste = getsurfacefromint(number); // already on the image
+            }
             pastesurface(baseimage, topaste, i, j, format);
             SDL_FreeSurface(topaste);
             a++;

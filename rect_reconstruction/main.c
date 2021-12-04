@@ -3,5 +3,5 @@
 
 int main()
 {
-    reconstruction("grid_01.result");
+    reconstruction("grid_01.result", "grid_01");
 }
