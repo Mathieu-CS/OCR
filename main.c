@@ -3,11 +3,10 @@
 #include <stdio.h>
 #include <math.h>
 
-
-#include "image_preprocessing/operations.h"
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "image_preprocessing/operations.h"
+//#include "image_preprocessing/operations.h"
 #include "image_preprocessing/grayscale.h"
 #include "image_preprocessing/rotate.h"
 #include "image_preprocessing/noise_cancel.h"
@@ -502,6 +501,8 @@ void on_detect_square(GtkButton* button, gpointer user_data)
     printf("x = %i\n", coor[0]);
     printf("y = %i\n", coor[1]);
     printf("width = %i\n", coor[2]);*/
+
+
     draw_square(contrast, coor[0], coor[1], coor[2]);
     split(contrast, coor[0], coor[1], coor[2], coor[2]);
 

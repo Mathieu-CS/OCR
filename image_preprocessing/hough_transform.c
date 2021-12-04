@@ -133,8 +133,12 @@ void edge_detection(char* path)
 	printf("maxVertical = %i\n", maxVertical);
 	printf("maxHorizontal = %i\n", maxHorizontal);
 
+        SDL_Surface* blackwhite = display_bmp("blackwhite.bmp");
+        blackwhite = rotozoomSurface(blackwhite, maxHorizontal, 1.0, 2);
+        SDL_SaveBMP(blackwhite, "blackwhite.bmp");
+        SDL_FreeSurface(blackwhite);
 
-    image = rotozoomSurface(image, maxVertical - 90, 1.0, 2);
+    image = rotozoomSurface(image, maxHorizontal, 1.0, 2);
 
     for (int i = 0; i < diagonale; i++)
     {
@@ -208,7 +212,7 @@ void edge_detection(char* path)
                 }
             //printf("this : %i\n", A[i][j]);
             threshold = 200;
-            if (abs(maxVertical - 90) > 4)
+            if (abs(maxHorizontal) > 4)
             {
                 threshold = 60;
             }

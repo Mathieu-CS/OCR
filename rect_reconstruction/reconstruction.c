@@ -146,6 +146,7 @@ void reconstruction(char* solved)
     int ix = 0;
     int iy = 0;
     char ch;
+    printf("openned");
 
     while ((ch = fgetc(fh)) != EOF)
     {
