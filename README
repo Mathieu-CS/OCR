@@ -1,25 +1,7 @@
 Compile the whole project with the "make" command
 
-Image Processing (image_processing):
-Run : ./main (Image Path) (r) (g)
-Args : (Image Path)
-       (r) if you want to perform a rotation on the image, anything else if not.
-       (g) if you want to perform noise removal, anything else if not.
+It can be ran using the ./main command. Once the program is launched, give it an image, follow the steps and it will solve the sudoku.
 
-Split (split):
-Run : ./split (Image Path) (x0) (y0) (width) (length)
-Args : (Image Path)
-       (x0) - (y0) coordinates of top left pixel of the grid
-       (width) (length) - size of the grid
+Images can be found in the Images folder.
 
-Sudoku Solver (solver):
-Run : ./solver (Input Path)
-Args : (Input Path) - grid_00 by default
-Creates : An output, by default : grid_00.result
-
-XOR Network (xor):
-Run : ./xor (EPOCHS) (load / save) (path)
-Args : (EPOCHS) - Number of epochs to run the XOR Network (Cycles)
-       (load / save) - either load or save the xor network
-       (path) - path to load or save the xor network
-Returns : Weights and Biases for the network
+The ai_full folder is what we used for the training of our neural network. In this folder, the "make" command can be used. It has a dataset in the folder called training_db (1200 images). The neural network can be launched using the ./main command once compiled. It will print the percentage of correst responses.
