@@ -437,7 +437,14 @@ typedef struct Interface
     GtkButton* detect_square;
     GtkButton* feedAI_button;
     GtkButton* solve_button;
+    GtkButton* start;
+    GtkButton* close_button;
+    GtkButton* restart;
     GtkImage* image;
+    GtkImage* image1;
+    GtkImage* image2;
+    GtkImage* image3;
+    GtkStack* stack;
 }Interface;
 
 void on_load(GtkFileChooserButton* button, gpointer user_data)
@@ -453,6 +460,7 @@ void on_load(GtkFileChooserButton* button, gpointer user_data)
     //gtk_widget_hide(GTK_WIDGET(interface->load_button));
 
     g_free(file);
+    gtk_widget_set_sensitive(GTK_WIDGET(interface->preprocess_button), TRUE);
 }
 
 
@@ -488,6 +496,8 @@ void on_preprocess_clicked(GtkButton* button, gpointer user_data)
     int height = 707;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale("muchachos.bmp", width, height, TRUE, NULL);
     gtk_image_set_from_pixbuf(interface->image, pixbuf);
+    gtk_image_set_from_pixbuf(interface->image1, pixbuf);
+    gtk_stack_set_visible_child_name(interface->stack, "page2");
     //gtk_widget_hide(GTK_WIDGET(interface->load_button));
 
 }
@@ -519,7 +529,9 @@ void on_detect_square(GtkButton* button, gpointer user_data)
     int width = 707;
     int height = 707;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale("rect.bmp", width, height, TRUE, NULL);
-    gtk_image_set_from_pixbuf(interface->image, pixbuf);
+    gtk_image_set_from_pixbuf(interface->image1, pixbuf);
+    gtk_image_set_from_pixbuf(interface->image2, pixbuf);
+    gtk_stack_set_visible_child_name(interface->stack, "page3");
 }
 
 void on_reconstruction(GtkButton* button, gpointer user_data)
@@ -531,11 +543,12 @@ void on_reconstruction(GtkButton* button, gpointer user_data)
     int width = 707;
     int height = 707;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale("end.bmp", width, height, TRUE, NULL);
-    gtk_image_set_from_pixbuf(interface->image, pixbuf);
+    gtk_image_set_from_pixbuf(interface->image3, pixbuf);
 }
 
-void on_feedAI(GtkButton* button)
+void on_feedAI(GtkButton* button, gpointer user_data)
 {
+    Interface* interface = user_data;
     gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
     FILE* fptr2;
 
@@ -568,13 +581,15 @@ void on_feedAI(GtkButton* button)
         {
             fprintf(fptr2, " ");
         }
-
     }
     fclose(fptr2);
+    gtk_widget_set_sensitive(GTK_WIDGET(interface->solve_button), TRUE);
+    
 }
 
 void on_solve(GtkButton* button, gpointer user_data)
 {
+    Interface* interface = user_data;
     char* param = "grid_00";
     char filename[15];
     
@@ -639,9 +654,37 @@ void on_solve(GtkButton* button, gpointer user_data)
     fp = fopen(filename, "w");
     fprintf(fp, "%s", sudokuStr(grid));
     fclose(fp);
+    gtk_stack_set_visible_child_name(interface->stack, "page4");
+    gchar* file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(interface->load_button));
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale(file, 707, 707, TRUE, NULL);
+    gtk_image_set_from_pixbuf(interface->image3, pixbuf);
 }
 
+void on_start(GtkButton* start, gpointer user_data)
+{
+    Interface* interface = user_data;
+    gtk_stack_set_visible_child_name(interface->stack, "page1");
+    gtk_widget_set_visible(GTK_WIDGET(interface->restart), TRUE);
+}
 
+void on_close(GtkButton* close, gpointer user_data)
+{
+    Interface* interface = user_data;
+    gtk_widget_destroy(GTK_WIDGET(interface->window));
+}
+
+void on_restart(GtkButton* restart, gpointer user_data)
+{
+    Interface* interface = user_data;
+    gtk_stack_set_visible_child_name(interface->stack, "page1");
+    gchar* file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(interface->load_button));
+    GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale(file, 707, 707, TRUE, NULL);
+    gtk_image_set_from_pixbuf(interface->image, pixbuf);
+    gtk_widget_set_sensitive(GTK_WIDGET(interface->detect_square), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(interface->feedAI_button), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(interface->solve_button), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(interface->split_button), TRUE);
+}
 
 int main(int argc, char** argv)
 {
@@ -696,7 +739,6 @@ int main(int argc, char** argv)
             return 1;
         }
 
-        g_object_set(gtk_settings_get_default(),"gtk-application-prefer-dark-theme", TRUE,NULL);
 
         GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
         GtkButton* preprocess_button = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton"));
@@ -704,8 +746,15 @@ int main(int argc, char** argv)
         GtkButton* detect_button = GTK_BUTTON(gtk_builder_get_object(builder, "detect_square"));
         GtkButton* feedAI = GTK_BUTTON(gtk_builder_get_object(builder, "feedAI"));
         GtkButton* solve_button = GTK_BUTTON(gtk_builder_get_object(builder, "solve_button"));
+        GtkButton* start = GTK_BUTTON(gtk_builder_get_object(builder, "Start"));
+        GtkButton* close_button = GTK_BUTTON(gtk_builder_get_object(builder, "close_button"));
+        GtkButton* restart = GTK_BUTTON(gtk_builder_get_object(builder, "restart"));
         GtkFileChooserButton* load_button = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "LoadButton"));
         GtkImage* image = GTK_IMAGE(gtk_builder_get_object(builder, "image"));
+        GtkImage* image1 = GTK_IMAGE(gtk_builder_get_object(builder, "image1"));
+        GtkImage* image2 = GTK_IMAGE(gtk_builder_get_object(builder, "image2"));
+        GtkImage* image3 = GTK_IMAGE(gtk_builder_get_object(builder, "image3"));
+        GtkStack* stack = GTK_STACK(gtk_builder_get_object(builder, "Stack"));
 
 
         Interface interface = {
@@ -715,18 +764,28 @@ int main(int argc, char** argv)
             .split_button = split_button,
             .feedAI_button = feedAI,
             .solve_button = solve_button,
+            .start = start,
+            .close_button = close_button,
+            .restart = restart,
             .load_button = load_button,
             .image = image,
+            .image1 = image1,
+            .image2 = image2,
+            .image3 = image3,
+            .stack = stack,
         };
 
 
         g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+        g_signal_connect(close_button, "clicked", G_CALLBACK(on_close), &interface);
         g_signal_connect(load_button, "selection-changed", G_CALLBACK(on_load), &interface);
         g_signal_connect(preprocess_button, "clicked", G_CALLBACK(on_preprocess_clicked), &interface);
         g_signal_connect(detect_button, "clicked", G_CALLBACK(on_detect_square), &interface);
         g_signal_connect(split_button, "clicked", G_CALLBACK(on_reconstruction), &interface);
-        g_signal_connect(feedAI, "clicked", G_CALLBACK(on_feedAI), NULL);
+        g_signal_connect(feedAI, "clicked", G_CALLBACK(on_feedAI), &interface);
         g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
+        g_signal_connect(start, "clicked", G_CALLBACK(on_start), &interface);
+        g_signal_connect(restart, "clicked", G_CALLBACK(on_restart), &interface);
 
         gtk_widget_show(GTK_WIDGET(window));
 
