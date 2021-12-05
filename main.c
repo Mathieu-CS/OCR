@@ -688,110 +688,70 @@ void on_restart(GtkButton* restart, gpointer user_data)
 
 int main(int argc, char** argv)
 {
-    if (argc != 2 && argc != 3)
+    gtk_init(&argc, &argv);
+
+    GtkBuilder* builder = gtk_builder_new ();
+
+    GError* error = NULL;
+    if (gtk_builder_add_from_file(builder, "gtk/interface.glade", &error) == 0)
     {
-        return 1;   
+        g_printerr("Error loading file: %s\n", error->message);
+        g_clear_error(&error);
+        return 1;
     }
+
+
+    GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
+    GtkButton* preprocess_button = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton"));
+    GtkButton* split_button = GTK_BUTTON(gtk_builder_get_object(builder, "split_button"));
+    GtkButton* detect_button = GTK_BUTTON(gtk_builder_get_object(builder, "detect_square"));
+    GtkButton* feedAI = GTK_BUTTON(gtk_builder_get_object(builder, "feedAI"));
+    GtkButton* solve_button = GTK_BUTTON(gtk_builder_get_object(builder, "solve_button"));
+    GtkButton* start = GTK_BUTTON(gtk_builder_get_object(builder, "Start"));
+    GtkButton* close_button = GTK_BUTTON(gtk_builder_get_object(builder, "close_button"));
+    GtkButton* restart = GTK_BUTTON(gtk_builder_get_object(builder, "restart"));
+    GtkFileChooserButton* load_button = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "LoadButton"));
+    GtkImage* image = GTK_IMAGE(gtk_builder_get_object(builder, "image"));
+    GtkImage* image1 = GTK_IMAGE(gtk_builder_get_object(builder, "image1"));
+    GtkImage* image2 = GTK_IMAGE(gtk_builder_get_object(builder, "image2"));
+    GtkImage* image3 = GTK_IMAGE(gtk_builder_get_object(builder, "image3"));
+    GtkStack* stack = GTK_STACK(gtk_builder_get_object(builder, "Stack"));
+
+    gtk_window_set_title(window, "Sudoku Solver");
     
-
-    if (strcmp(argv[1], "image_preprocessing") == 0)
-    {
-        printf("here");
-        Gamma(argv[2]);
-        Contrast("gamma.bmp");
-        Gauss("contrast.bmp");
-        SDL_Surface* image = display_bmp("Gauss.bmp");
-
-        double **M = calloc(image->w, sizeof(double)); // initialisation of the Matrix
-
-        for (int i = 0; i < image->w; i++)
-        {
-            M[i] = calloc(image->h, sizeof(double));
-        } // end of init
-        //noise removing 
-        otsu_treshold("Gauss.bmp", "blackwhite.bmp");
-        Sobel("blackwhite.bmp", M);
-                
-                
-        for (int k = 0; k < image->w; k++) // free the Matrix
-        {
-            free(M[k]);
-        }
-        free(M);
-        SDL_FreeSurface(image);
-
-        otsu_treshold("Sobel.bmp", "blackwhite2.bmp");
-            
-        edge_detection("blackwhite2.bmp");
-    }
-    
-    else if (strcmp(argv[1], "gtk") == 0)
-    {
-        gtk_init(&argc, &argv);
-
-        GtkBuilder* builder = gtk_builder_new ();
-
-        GError* error = NULL;
-        if (gtk_builder_add_from_file(builder, "gtk/interface.glade", &error) == 0)
-        {
-            g_printerr("Error loading file: %s\n", error->message);
-            g_clear_error(&error);
-            return 1;
-        }
+    Interface interface = {
+        .window = window,
+        .preprocess_button = preprocess_button,
+        .detect_square = detect_button,
+        .split_button = split_button,
+        .feedAI_button = feedAI,
+        .solve_button = solve_button,
+        .start = start,
+        .close_button = close_button,
+        .restart = restart,
+        .load_button = load_button,
+        .image = image,
+        .image1 = image1,
+        .image2 = image2,
+        .image3 = image3,
+        .stack = stack,
+    };
 
 
-        GtkWindow* window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
-        GtkButton* preprocess_button = GTK_BUTTON(gtk_builder_get_object(builder, "LaunchProcessButton"));
-        GtkButton* split_button = GTK_BUTTON(gtk_builder_get_object(builder, "split_button"));
-        GtkButton* detect_button = GTK_BUTTON(gtk_builder_get_object(builder, "detect_square"));
-        GtkButton* feedAI = GTK_BUTTON(gtk_builder_get_object(builder, "feedAI"));
-        GtkButton* solve_button = GTK_BUTTON(gtk_builder_get_object(builder, "solve_button"));
-        GtkButton* start = GTK_BUTTON(gtk_builder_get_object(builder, "Start"));
-        GtkButton* close_button = GTK_BUTTON(gtk_builder_get_object(builder, "close_button"));
-        GtkButton* restart = GTK_BUTTON(gtk_builder_get_object(builder, "restart"));
-        GtkFileChooserButton* load_button = GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "LoadButton"));
-        GtkImage* image = GTK_IMAGE(gtk_builder_get_object(builder, "image"));
-        GtkImage* image1 = GTK_IMAGE(gtk_builder_get_object(builder, "image1"));
-        GtkImage* image2 = GTK_IMAGE(gtk_builder_get_object(builder, "image2"));
-        GtkImage* image3 = GTK_IMAGE(gtk_builder_get_object(builder, "image3"));
-        GtkStack* stack = GTK_STACK(gtk_builder_get_object(builder, "Stack"));
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(close_button, "clicked", G_CALLBACK(on_close), &interface);
+    g_signal_connect(load_button, "selection-changed", G_CALLBACK(on_load), &interface);
+    g_signal_connect(preprocess_button, "clicked", G_CALLBACK(on_preprocess_clicked), &interface);
+    g_signal_connect(detect_button, "clicked", G_CALLBACK(on_detect_square), &interface);
+    g_signal_connect(split_button, "clicked", G_CALLBACK(on_reconstruction), &interface);
+    g_signal_connect(feedAI, "clicked", G_CALLBACK(on_feedAI), &interface);
+    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
+    g_signal_connect(start, "clicked", G_CALLBACK(on_start), &interface);
+    g_signal_connect(restart, "clicked", G_CALLBACK(on_restart), &interface);
 
+    gtk_widget_show(GTK_WIDGET(window));
 
-        Interface interface = {
-            .window = window,
-            .preprocess_button = preprocess_button,
-            .detect_square = detect_button,
-            .split_button = split_button,
-            .feedAI_button = feedAI,
-            .solve_button = solve_button,
-            .start = start,
-            .close_button = close_button,
-            .restart = restart,
-            .load_button = load_button,
-            .image = image,
-            .image1 = image1,
-            .image2 = image2,
-            .image3 = image3,
-            .stack = stack,
-        };
+    gtk_main();
 
-
-        g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-        g_signal_connect(close_button, "clicked", G_CALLBACK(on_close), &interface);
-        g_signal_connect(load_button, "selection-changed", G_CALLBACK(on_load), &interface);
-        g_signal_connect(preprocess_button, "clicked", G_CALLBACK(on_preprocess_clicked), &interface);
-        g_signal_connect(detect_button, "clicked", G_CALLBACK(on_detect_square), &interface);
-        g_signal_connect(split_button, "clicked", G_CALLBACK(on_reconstruction), &interface);
-        g_signal_connect(feedAI, "clicked", G_CALLBACK(on_feedAI), &interface);
-        g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
-        g_signal_connect(start, "clicked", G_CALLBACK(on_start), &interface);
-        g_signal_connect(restart, "clicked", G_CALLBACK(on_restart), &interface);
-
-        gtk_widget_show(GTK_WIDGET(window));
-
-        gtk_main();
-
-        return 0;
-    }
     return 0;
 }
