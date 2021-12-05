@@ -572,6 +572,8 @@ void on_feedAI(GtkButton* button, gpointer user_data)
 
 void on_solve(GtkButton* button, gpointer user_data)
 {
+    (void)button;
+    
     Interface* interface = user_data;
     char* param = "grid_00";
     char filename[15];
@@ -647,6 +649,7 @@ void on_solve(GtkButton* button, gpointer user_data)
 
 void on_start(GtkButton* start, gpointer user_data)
 {
+    (void)start;
     Interface* interface = user_data;
     gtk_stack_set_visible_child_name(interface->stack, "page1");
     gtk_widget_set_visible(GTK_WIDGET(interface->restart), TRUE);
@@ -654,12 +657,14 @@ void on_start(GtkButton* start, gpointer user_data)
 
 void on_close(GtkButton* close, gpointer user_data)
 {
+    (void)close;
     Interface* interface = user_data;
     gtk_widget_destroy(GTK_WIDGET(interface->window));
 }
 
 void on_restart(GtkButton* restart, gpointer user_data)
 {
+    (void)restart;
     Interface* interface = user_data;
     gtk_stack_set_visible_child_name(interface->stack, "page1");
     gchar* file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(interface->load_button));
