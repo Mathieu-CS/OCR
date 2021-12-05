@@ -1,4 +1,4 @@
-Compile the whole project with the "make" command
+Compile the whole project with the "make" command.
 
 It can be ran using the ./main command. Once the program is launched, give it an image, follow the steps and it will solve the sudoku.
 
