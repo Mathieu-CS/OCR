@@ -1,7 +1,8 @@
 Compile the whole project with the "make" command.
 
 It can be ran using the ./main command. Once the program is launched, give it an image, follow the steps and it will solve the sudoku.
+The "make clean" command can be used to clean up the compiled code and resulting images.
 
 Images can be found in the Images folder.
 
-The ai_full folder is what we used for the training of our neural network. In this folder, the "make" command can be used. It has a dataset in the folder called training_db (1200 images). The neural network can be launched using the ./main command once compiled. It will print the percentage of correst responses.
+The ai_full folder is what we used for the training of our neural network. In this folder, the "make" command can be used. It has a dataset in the folder called training_db (1200 images). The neural network can be launched using the ./main command once compiled. It will print the percentage of correct responses.
