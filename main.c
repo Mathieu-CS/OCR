@@ -9,7 +9,6 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include "image_preprocessing/operations.h"
-//#include "image_preprocessing/operations.h"
 #include "image_preprocessing/grayscale.h"
 #include "image_preprocessing/rotate.h"
 #include "image_preprocessing/noise_cancel.h"
@@ -21,9 +20,6 @@
 #include "image_preprocessing/hough_transform.h"
 #include "string.h"
 
-//#include "ai/sdltoarray.h"
-
-
 // rect_reconstruction
 #include "rect_reconstruction/reconstruction.h"
 
@@ -33,19 +29,6 @@
 #include "gtk/gtk.h"
 
 #define N 9 
-
-
-//int* detect_rect(SDL_Surface* image);
-//void draw_square(SDL_Surface* image, int x, int y, int w);
-// -------------------------------------------------------
-//                    INTERSECTIONS
-// -------------------------------------------------------
-
-// returns the width of the square if square else 0;
-
-
-
-
 
 int square(int x1, int y1, int x2, int y2)
 {
@@ -118,7 +101,7 @@ int* detect_rect(SDL_Surface* image)
 
             if (r == 0 && g == 255 && b == 0)
             {
-                printf("intersection detected at %i,%i\n", i, j);
+                //printf("intersection detected at %i,%i\n", i, j);
                 int temp = __detect_rect(image, i, j);
                 if (temp > rw)
                 {
@@ -539,7 +522,7 @@ void on_reconstruction(GtkButton* button, gpointer user_data)
     gtk_widget_set_sensitive(GTK_WIDGET(button), FALSE);
     Interface* interface = user_data;
     reconstruction("grid_00.result", "grid_00");
-    printf("HERE\n");
+    //printf("HERE\n");
     int width = 707;
     int height = 707;
     GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file_at_scale("end.bmp", width, height, TRUE, NULL);
@@ -555,7 +538,7 @@ void on_feedAI(GtkButton* button, gpointer user_data)
     fptr2 = fopen("grid_00", "w");
     for (int i = 0; i < 81; i++)
     {
-        printf("%i\n", i);
+        //printf("%i\n", i);
         char *a;
         if (i < 10)
             a = malloc(7*sizeof(char));
@@ -599,12 +582,14 @@ void on_solve(GtkButton* button, gpointer user_data)
     input[0] = '\0';
     for (int i = 0; i < 27; i++)
     {
-        printf("%i\n", i);
+        //printf("%i\n", i);
         char temp[4];
         int a = fscanf(fo, "%s", temp);
+        if (a == -99)
+            printf("prob\n");
         strcat(input, temp);
     }
-    printf("%s\n", input);
+    //printf("%s\n", input);
     input[81] = '\0';
 
     fclose(fo);

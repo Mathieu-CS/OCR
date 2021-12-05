@@ -205,7 +205,7 @@ struct triple* analysis(SDL_Surface* image, int seuil,int* len, struct triple *p
 			}
 		}
 	}
-	printf("Nombre de tache pour hough : %i\n", compteur);
+	//printf("Nombre de tache pour hough : %i\n", compteur);
 	SDL_FreeSurface(result);
 	return positions;
 }

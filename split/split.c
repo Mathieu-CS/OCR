@@ -89,7 +89,7 @@ int* detect_rect(SDL_Surface* image)
 
             if (r == 0 && g == 255 && b == 0)
             {
-                printf("intersection detected at %i,%i\n", i, j);
+                //printf("intersection detected at %i,%i\n", i, j);
                 int temp = __detect_rect(image, i, j);
                 if (temp > rw)
                 {

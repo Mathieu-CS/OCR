@@ -130,8 +130,8 @@ void edge_detection(char* path)
 				maxHorizontal = i;
 		}
 	}
-	printf("maxVertical = %i\n", maxVertical);
-	printf("maxHorizontal = %i\n", maxHorizontal);
+	//printf("maxVertical = %i\n", maxVertical);
+	//printf("maxHorizontal = %i\n", maxHorizontal);
 
         SDL_Surface* blackwhite = display_bmp("blackwhite.bmp");
         blackwhite = rotozoomSurface(blackwhite, maxHorizontal, 1.0, 2);

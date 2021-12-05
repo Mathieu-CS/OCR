@@ -161,8 +161,8 @@ char* sudokuStr(int grid[N][N])
                     //c = grid[i][j] + '0';
                     sudoku[count] = grid[i][j] + '0';
                 }
-                printf("%i\n", count);
-                printf("%c\n", sudoku[count]);
+                //printf("%i\n", count);
+                //printf("%c\n", sudoku[count]);
                 //sudoku[count] = c;
                 count++;
 
@@ -187,7 +187,7 @@ char* sudokuStr(int grid[N][N])
             if (i == 8)
                 return sudoku;
 	}
-        printf("here");
+        //printf("here");
         return sudoku;
 }
 

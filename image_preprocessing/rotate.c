@@ -13,7 +13,7 @@ void image_rotation(char *path, double angle)
   rotation = rotozoomSurface(image, angle, 1.0, 2);
 
   SDL_SaveBMP(rotation, "rotated.bmp");
-  printf("Image rotated!\n");
+  //printf("Image rotated!\n");
   SDL_FreeSurface(image);
   SDL_FreeSurface(rotation);
 }

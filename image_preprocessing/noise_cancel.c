@@ -53,7 +53,7 @@ uint8_t Min(uint8_t r, uint8_t g, uint8_t b)
 
 void Contrast(char *path)
 {
-    printf("Noise removing : applying contrast...\n");
+    //printf("Noise removing : applying contrast...\n");
     SDL_Surface* image=display_bmp(path);
     int c_value = image_pixel_average(image);
     int av = image_pixel_average(image);
@@ -86,7 +86,7 @@ void Contrast(char *path)
 
 void Gamma(char *path)
 {
-    printf("Noise removing : applying gamma filter ...\n");
+    //printf("Noise removing : applying gamma filter ...\n");
     SDL_Surface* image=display_bmp(path);
     float gamma_correction = 2.0f / (float) (255 - image_pixel_average(image));
 

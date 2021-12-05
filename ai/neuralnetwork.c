@@ -57,12 +57,12 @@ int neuralNetwork(char imgStr[])
       int k = 0;
       double nb;
       while (j < numHiddenNodes)
-	{
-
-            int a = fscanf(fptr, "%lf", &nb);
-            printf("ici la 2\n");
-          if (a != EOF)
-              printf("A sup a 0\n");
+      {
+          
+          int a = fscanf(fptr, "%lf", &nb);
+          //printf("ici la 2\n");
+          if (a == -99)
+              printf("prob\n");
 	  if (k == numInputs)
 	    {
 	      k = 0;
@@ -77,8 +77,8 @@ int neuralNetwork(char imgStr[])
 	{
 	  hiddenLayerBias[j] = nb;
 	  int a = fscanf(fptr, "%lf", &nb);
-          if (a != EOF)
-              printf("A sup a 0\n");
+          if (a == -99)
+              printf("prob\n");
 	  j++;
 	}
       
@@ -95,8 +95,8 @@ int neuralNetwork(char imgStr[])
 	  if (j != numOutputs-1 || k != numHiddenNodes-1)
 	    {
 	      int a = fscanf(fptr, "%lf", &nb);
-              if (a != EOF)
-                  printf("A sup a 0\n");
+              if (a == -99)
+                  printf("prob\n");
 	    }
 	  k++;
 	}
@@ -106,8 +106,8 @@ int neuralNetwork(char imgStr[])
 	{
 	  outputLayerBias[j] = nb;
 	  int a = fscanf(fptr, "%lf", &nb);
-          if (a != EOF)
-              printf("A sup a 0\n");
+          if (a == -99)
+              printf("prob\n");
 	  j++;
 	}
       
