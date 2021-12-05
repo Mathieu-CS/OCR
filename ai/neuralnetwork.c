@@ -37,16 +37,16 @@ double dRelu(double x)
 
 int neuralNetwork(char imgStr[])
 {
-  double hiddenLayer[numHiddenNodes];
-  double outputLayer[numOutputs];
-
-  double hiddenLayerBias[numHiddenNodes];
-  double outputLayerBias[numOutputs];
-
-  double hiddenWeights[numInputs][numHiddenNodes];
-  double outputWeights[numHiddenNodes][numOutputs];
-
-  int load = 1;
+    double hiddenLayer[numHiddenNodes] = {0};
+    double outputLayer[numOutputs] = {0};
+    
+    double hiddenLayerBias[numHiddenNodes];
+    double outputLayerBias[numOutputs];
+    
+    double hiddenWeights[numInputs][numHiddenNodes];
+    double outputWeights[numHiddenNodes][numOutputs];
+    
+    int load = 1;
   
   if (load == 1) // load weights and biases from file
     {
@@ -106,7 +106,7 @@ int neuralNetwork(char imgStr[])
 	{
 	  outputLayerBias[j] = nb;
 	  int a = fscanf(fptr, "%lf", &nb);
-          if (a == -99)
+                    if (a == -99)
               printf("prob\n");
 	  j++;
 	}
