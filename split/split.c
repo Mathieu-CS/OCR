@@ -396,27 +396,3 @@ void draw_square(SDL_Surface* image, int x, int y, int w)
     
     SDL_SaveBMP(image, "rect.bmp");
 }
-
-/*int main()  
-{
-    // argv[1] = edgedetecion.bmp
-    // argv[2] = contrast.bmp
-
-    SDL_Surface* hough = display_bmp("../muchachos.bmp");
-    SDL_Surface* contrast = display_bmp("../blackwhite.bmp");
-
-    int* coor = detect_rect(hough);
-
-    printf("image detected\n");
-    printf("x = %i\n", coor[0]);
-    printf("y = %i\n", coor[1]);
-    printf("width = %i\n", coor[2]);
-    
-    draw_square(contrast, coor[0], coor[1], coor[2]);
-    split(contrast, coor[0], coor[1], coor[2], coor[2]);
-
-    SDL_FreeSurface(hough);
-    SDL_FreeSurface(contrast);
-    free(coor);
-    return 0;
-}*/
