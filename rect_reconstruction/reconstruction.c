@@ -74,7 +74,6 @@ void pastesurface(SDL_Surface* image, SDL_Surface* topaste, int x, int y, float 
         for (int j = 0; j < scaled->h; j++)
         {
             Uint32 pixel = get_pixel(scaled, i, j);
-            //printf("put pixel at pixel [%i;%i]\n", i + x, j + y);
             put_pixel(image, i + x, j + y, pixel);
         }
     }
