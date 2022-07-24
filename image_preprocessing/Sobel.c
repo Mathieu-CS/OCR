@@ -128,6 +128,5 @@ void Sobel(char* path, double **M)
 
     SDL_FreeSurface(image);
     SDL_FreeSurface(destination);
-    //return M;
 }
 
