@@ -23,9 +23,6 @@ void grayscale(char* path)
             Uint8 r, g, b;
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
             float avg = 0.3*r + 0.59*g + 0.11*b;
-            /*if (avg>70) r = g = b = (int)255;
-            else
-            r = g = b = (int)0;*/
             r = g = b = (int) avg;
             pixel = SDL_MapRGB(image_surface->format, r, g, b);
             put_pixel(image_surface, x, y, pixel);
@@ -115,7 +112,6 @@ void Threshold_adaptative(char *input)
       
       sum = int_img[x1][y1] - int_img[x1][y0] - int_img[x0][y1] + int_img[x0][y0];
 
-      //printf("here\n");
       Uint32 pixelT = get_pixel(image, i, j);
       Uint8 r, g, b;
 
@@ -137,7 +133,6 @@ void Threshold_adaptative(char *input)
 
   SDL_SaveBMP(to_return, "blackwhite.bmp");
   SDL_FreeSurface(to_return);
-  //SDL_FreeSurface(image);
 
   free_array(int_img, width);
 }
@@ -218,7 +213,6 @@ void black_and_white(char* pathh,char* outputt)
             Uint32 pixel = get_pixel(image_surface, x, y);
             Uint8 r, g, b;
             SDL_GetRGB(pixel, image_surface->format, &r, &g, &b);
-            //float avg = 0.3*r + 0.59*g + 0.11*b;
             if (r+g+b/3>127) r = g = b = (int)255;
             else
             { r = g = b = (int)0;}
@@ -281,7 +275,6 @@ Uint8 get_threshold(unsigned long *histogram, int total)
         }
     }
     Uint8 threshold = ((threshold1 + threshold2) / 2);
-    //printf("threshold = %u\n", threshold);
     return threshold;
 }
 void otsu_treshold(char* path, char* dest)
