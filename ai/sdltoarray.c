@@ -32,9 +32,7 @@ SDL_Surface* load_image(char *path)
 
 void toArray(char *imageLoc, double imageToArray[])
 {
-  //printf("%s\n", imageLoc);
   SDL_Surface* image_surface = load_image(imageLoc);
-  //int imageToArray[28*28];
   
   int width = image_surface->w;
   int height = image_surface->h;
@@ -61,11 +59,8 @@ void toArray(char *imageLoc, double imageToArray[])
 
 int isDigits2(char *imageLoc)
 {
-     //printf("%s\n", imageLoc);
   SDL_Surface* image_surface = load_image(imageLoc);
-  //int imageToArray[28*28];
 
-  //int max = 784;
   int p = 0;
   
   int width = image_surface->w;
