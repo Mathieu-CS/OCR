@@ -39,10 +39,7 @@ void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, Uint32 pixel)
 
 void HTLineDetection(char* image){
 	SDL_Surface* image_surface;
-	//SDL_Surface* screen_surface;
 	image_surface = display_bmp(image);
-	//screen_surface = display_image(image_surface);
-	//wait_for_keypressed();
 	
 	int Nx = image_surface->w;
 	int Ny = image_surface->h;
@@ -86,7 +83,6 @@ void HTLineDetection(char* image){
 	}
 	SDL_FreeSurface(image_surface);
 	image_surface = SDL_CreateRGBSurface(0, Nrho, Ntheta, 32, 0, 0, 0,0);
-	//struct line lines[Nrho * Ntheta];
 	int len = 0;
 
 	for(int x= 0; x < Nrho; x += 1)
@@ -98,8 +94,6 @@ void HTLineDetection(char* image){
 		if(gray > 210)
 		{	
 			pixel = SDL_MapRGB(image_surface->format, gray, gray, gray);
-			//struct line Line = {(x * drho), (y * dtheta)};
-			//lines[len] = Line;
 			len += 1;
 		}
 		else
@@ -109,25 +103,15 @@ void HTLineDetection(char* image){
 		put_pixel(image_surface, x, y, pixel);
 		}
 	}
-    /*
-	update_surface(screen_surface, image_surface);
-    	display_image(image_surface);
-    	wait_for_keypressed();
-    */
+
 	struct triple* positions = (struct triple*)malloc(sizeof(struct triple ) * 100000);
 	positions = analysis(image_surface, 210, &len,positions);
 	SDL_FreeSurface(image_surface);
 	image_surface = lineTracePos(positions,Nx,Ny,len,dtheta,drho,image);
-	//image_surface = lineTrace(image_surface,lines, Nx, Ny, len);
-    /*
-	update_surface(screen_surface, image_surface);
-	display_image(image_surface);
-	wait_for_keypressed();	
-    */
-    SDL_SaveBMP(image_surface,"hough.bmp");
+
+    	SDL_SaveBMP(image_surface,"hough.bmp");
 	free(positions);
     	SDL_FreeSurface(image_surface);
-    	//SDL_FreeSurface(screen_surface);
 }
 
 SDL_Surface* lineTrace(SDL_Surface* surface,struct line lines[], int Nx, int Ny, int len)
@@ -197,7 +181,6 @@ struct triple* analysis(SDL_Surface* image, int seuil,int* len, struct triple *p
 				float xb = si*1.0;
 				float yb = sj*1.0;
 				struct triple position = {xb, yb,npix};
-				//printf("%f , %f,%f\n",xb, yb,npix);
 				positions[*len] = position;
 				*len +=1;
 				free(pile->items);
@@ -247,7 +230,6 @@ SDL_Surface* lineTracePos(struct triple positions[], int Nx, int Ny, int len,flo
 	Uint8 r, g, b;
 	SDL_GetRGB(pixel, result->format, &r, &g, &b);
 	pixel = SDL_MapRGB(result->format, 255, 0, 0);
-	//printf("%i", len);
 	for(int i = 0 ; i < len ; i++)
 	{
 		struct triple pos = positions[i];
