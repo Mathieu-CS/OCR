@@ -141,7 +141,6 @@ char* sudokuStr(int grid[N][N])
 	int count = 0;
         char* sudoku = malloc(111 * sizeof(char));
 	sudoku[110] = '\0';
-        //sudoku[0] = '\0';
 	for (int i = 0; i < N && count < 110; i++)
 	{
             for (int j = 0; j < N && count < 110; j++)
@@ -158,12 +157,10 @@ char* sudokuStr(int grid[N][N])
            
                 else
                 {
-                    //c = grid[i][j] + '0';
                     sudoku[count] = grid[i][j] + '0';
                 }
                 printf("%i\n", count);
                 printf("%c\n", sudoku[count]);
-                //sudoku[count] = c;
                 count++;
 
                 if (j == 2 || j == 5)
@@ -190,81 +187,3 @@ char* sudokuStr(int grid[N][N])
         printf("here");
         return sudoku;
 }
-
-/*int main(int argc, char *argv[])
-{
-    if (argc < 2)
-    {
-        errx(1, "wrong number of args");
-    }
- char* param = argv[1];
-    char filename[15];
-    
-    FILE *fo;
-    fo = fopen(param, "r");
-    char *input = malloc(111 * sizeof(char));
-    input = fgets(input, 111, fo);
-    fclose(fo);
-
-
-    int grid[N][N];
-    
-    int count = 0;
-    int line = 0;
-    for (size_t i = 0; i < 9;)
-    {
-        if (input[count] != '\n' || line % 3 == 0)
-        {
-            for (size_t j = 0; j < 9; count++)
-            { 
-                if (input[count] != ' ' && input[count] != '\n')
-                {
-                    if (input[count] == '.')
-                    {
-                        grid[i][j] = 0;
-                    }
-                    else
-                    {
-                        char c = input[count];
-                        grid[i][j] = c - '0';
-                    }
-                    j++;
-                }
-            }
-            i++;
-        }
-        else
-        {
-            line++;
-        }
-    }
-
-    
-    // 0 means unassigned cells
-    int grid[N][N] = { { 3, 0, 6, 5, 0, 8, 4, 0, 0 },
-                       { 5, 2, 0, 0, 0, 0, 0, 0, 0 },
-                       { 0, 8, 7, 0, 0, 0, 0, 3, 1 },
-                       { 0, 0, 3, 0, 1, 0, 0, 8, 0 },
-                       { 9, 0, 0, 8, 6, 3, 0, 0, 5 },
-                       { 0, 5, 0, 0, 9, 0, 6, 0, 0 },
-                       { 1, 3, 0, 0, 0, 0, 2, 5, 0 },
-                       { 0, 0, 0, 0, 0, 0, 0, 7, 4 },
-                       { 0, 0, 5, 2, 0, 6, 3, 0, 0 } };
- 
-    if (solveSuduko(grid, 0, 0)==1)
-        print(grid);
-    else
-        printf("No solution exists");
-
-    solveSuduko(grid, 0, 0);
-    FILE *fp;
-
-    sprintf(filename, "%s.result", param);
-    fp = fopen(filename, "w");
-    fputs(sudokuStr(grid), fp);
-    fputs("\n", fp);
-    fclose(fp);
-    return 0;
-   
-}*/
-
